@@ -3,6 +3,8 @@
 #include "Input.h"
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
+#include "Model.h"
+#include "Shader.h"
 
 using glm::vec3;
 using glm::vec4;
@@ -30,8 +32,12 @@ bool Application3D::startup() {
 	m_projectionMatrix = glm::perspective(glm::pi<float>() * 0.25f,
 										  getWindowWidth() / (float)getWindowHeight(),
 										  0.1f, 1000.f);
-	m_FOV = glm::pi<float>() * 0.25f;
-
+	m_FOV = glm::pi<float>() * 0.5f;
+	m_mainShader = new Shader();
+	m_mainShader->CompileShaders("C:/Users/Zac/Documents/Graphics-Engine-Major-Project/Shaders/TestVertShader.txt", "C:/Users/Zac/Documents/Graphics-Engine-Major-Project/Shaders/TestFragShader.txt");
+	m_testModel = new Model();
+	m_testModel->GenerateTetrahedron();
+	m_testModel->setTransform(glm::translate(glm::vec3(1, 0, 0)));
 	return true;
 }
 
@@ -62,17 +68,6 @@ void Application3D::update(float deltaTime) {
 	// add a transform so that we can see the axis
 	Gizmos::addTransform(mat4(1));
 
-	// demonstrate a few shapes
-	Gizmos::addAABBFilled(vec3(0), vec3(1), vec4(0, 0.5f, 1, 0.25f));
-	Gizmos::addSphere(vec3(5, 0, 5), 1, 8, 8, vec4(1, 0, 0, 0.5f));
-	Gizmos::addRing(vec3(5, 0, -5), 1, 1.5f, 8, vec4(0, 1, 0, 1));
-	Gizmos::addDisk(vec3(-5, 0, 5), 1, 16, vec4(1, 1, 0, 1));
-	Gizmos::addArc(vec3(-5, 0, -5), 0, 2, 1, 8, vec4(1, 0, 1, 1));
-
-	mat4 t = glm::rotate(time, glm::normalize(vec3(1, 1, 1)));
-	t[3] = vec4(-2, 0, 0, 1);
-	Gizmos::addCylinderFilled(vec3(0), 0.5f, 1, 5, vec4(0, 1, 1, 1), &t);
-
 	// quit if we press escape
 	aie::Input* input = aie::Input::getInstance();
 	vec3 deltaTranslate((input->isKeyDown(aie::INPUT_KEY_D) ? 1 : 0) - (input->isKeyDown(aie::INPUT_KEY_A) ? 1 : 0), (input->isKeyDown(aie::INPUT_KEY_LEFT_SHIFT) ? 1 : 0) - (input->isKeyDown(aie::INPUT_KEY_LEFT_CONTROL) ? 1 : 0), (input->isKeyDown(aie::INPUT_KEY_S) ? 1 : 0) - (input->isKeyDown(aie::INPUT_KEY_W) ? 1 : 0));
@@ -95,7 +90,7 @@ void Application3D::update(float deltaTime) {
 	 m_lMX = mx;
 	 m_lMY = my;
 
-	 m_FOV += -((float)input->getMouseScroll() - m_LSCRL) * deltaTime;
+	 //m_FOV += -((float)input->getMouseScroll() - m_LSCRL) * deltaTime;
 	 m_LSCRL = (float)input->getMouseScroll();
 	 if (input->isKeyDown(aie::INPUT_KEY_ESCAPE))
 		quit();
@@ -111,5 +106,7 @@ void Application3D::draw() {
 										  getWindowWidth() / (float)getWindowHeight(),
 										  0.1f, 1000.f);
 
+	
+	m_testModel->draw(m_mainShader->GetID(), m_projectionMatrix * m_viewMatrix);
 	Gizmos::draw(m_projectionMatrix * m_viewMatrix);
 }

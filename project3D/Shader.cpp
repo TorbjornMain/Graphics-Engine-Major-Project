@@ -23,6 +23,7 @@ void Shader::CompileShaders(const char * vert, const char * frag)
 	m_id = glCreateProgram();
 	glAttachShader(m_id, vertShader);
 	glAttachShader(m_id, fragShader);
+	glLinkProgram(m_id);
 
 	glGetProgramiv(m_id, GL_LINK_STATUS, &success);
 	if (success == GL_FALSE)
@@ -55,6 +56,6 @@ void Shader::loadAndCompileShader(unsigned int shaderID, const char * filename)
 
 	const char * cstr = fullFile.c_str();
 
-	glShaderSource(shaderID, 1, &cstr, 0);
+	glShaderSource(shaderID, 1, (const char**)&cstr, 0);
 	glCompileShader(shaderID);
 }

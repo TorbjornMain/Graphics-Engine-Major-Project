@@ -3,6 +3,9 @@
 #include "Application.h"
 #include <glm/mat4x4.hpp>
 
+class Shader;
+class Model;
+
 class Application3D : public aie::Application {
 public:
 
@@ -19,5 +22,7 @@ protected:
 	glm::mat4	m_camTransform;
 	glm::mat4	m_viewMatrix;
 	glm::mat4	m_projectionMatrix;
+	Shader*		m_mainShader;
+	Model*		m_testModel;
 	float m_lMX, m_lMY, m_FOV, m_LSCRL;
 };

@@ -15,32 +15,33 @@ void Model::GenerateTetrahedron()
 {
 	m_numVertices = 4;
 	m_vertices = new Vertex[4];
-	m_vertices[0].position = glm::vec4(0, 0.7, 0, 0);
+	m_vertices[0].position = glm::vec4(0, 0.7, 0, 1);
 	m_vertices[0].color = glm::vec4(1,0,0,1);
-	m_vertices[1].position = glm::vec4(0.5, 0, 0.5, 0);
+	m_vertices[1].position = glm::vec4(0.5, 0, 0.5, 1);
 	m_vertices[1].color = glm::vec4(0, 1, 0, 1);
-	m_vertices[2].position = glm::vec4(-0.5, 0, 0.5, 0);
+	m_vertices[2].position = glm::vec4(-0.7, 0, 0, 1);
 	m_vertices[2].color = glm::vec4(0, 0, 1, 1);
-	m_vertices[3].position = glm::vec4(0.5, 0, -0.5, 0);
+	m_vertices[3].position = glm::vec4(0, 0, -0.7, 1);
 	m_vertices[3].color = glm::vec4(1, 1, 1, 1);
 
 	m_numIndices = 12;
-	m_indices[0] = 2;
+	m_indices = new unsigned int[12];
+	m_indices[0] = 1;
 	m_indices[1] = 0;
-	m_indices[2] = 1;
+	m_indices[2] = 2;
 
-	m_indices[3] = 3;
+	m_indices[3] = 2;
 	m_indices[4] = 0;
-	m_indices[5] = 2;
+	m_indices[5] = 3;
 
 	m_indices[6] = 3;
 	m_indices[7] = 0;
 	m_indices[8] = 1;
 
 
-	m_indices[9] = 3;
+	m_indices[9] = 1;
 	m_indices[10] = 2;
-	m_indices[11] = 1;
+	m_indices[11] = 3;
 }
 
 void Model::draw(unsigned int shaderID, glm::mat4 camera)
@@ -67,7 +68,7 @@ void Model::draw(unsigned int shaderID, glm::mat4 camera)
 
 	glUseProgram(shaderID);
 	unsigned int pvu = glGetUniformLocation(shaderID, "projectionViewWorldMatrix");
-	glUniformMatrix4fv(pvu, 1, false, glm::value_ptr(camera));
+	glUniformMatrix4fv(pvu, 1, false, glm::value_ptr(camera * m_transform));
 	glDrawElements(GL_TRIANGLES, m_numIndices, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
 
