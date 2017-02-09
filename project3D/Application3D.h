@@ -16,7 +16,8 @@ public:
 	virtual void draw();
 
 protected:
-
+	glm::mat4	m_camTransform;
 	glm::mat4	m_viewMatrix;
 	glm::mat4	m_projectionMatrix;
+	float m_lMX, m_lMY, m_FOV, m_LSCRL;
 };
