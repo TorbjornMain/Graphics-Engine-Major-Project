@@ -17,6 +17,7 @@ public:
 
 	void draw(unsigned int shaderID, glm::mat4 camera);
 	void setTransform(glm::mat4 trans) { m_transform = trans; }
+	bool loadFromFile(const char* filename);
 	glm::mat4 getTransform() { return m_transform; }
 private:
 	glm::mat4 m_transform;

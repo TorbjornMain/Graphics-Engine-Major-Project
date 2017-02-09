@@ -34,9 +34,9 @@ bool Application3D::startup() {
 										  0.1f, 1000.f);
 	m_FOV = glm::pi<float>() * 0.5f;
 	m_mainShader = new Shader();
-	m_mainShader->CompileShaders("C:/Users/Zac/Documents/Graphics-Engine-Major-Project/Shaders/TestVertShader.txt", "C:/Users/Zac/Documents/Graphics-Engine-Major-Project/Shaders/TestFragShader.txt");
+	m_mainShader->CompileShaders("../../../Shaders/TestVertShader.txt", "../../../Shaders/TestFragShader.txt");
 	m_testModel = new Model();
-	m_testModel->GenerateTetrahedron();
+	m_testModel->loadFromFile("../../../Meshes/Bunny.obj");
 	m_testModel->setTransform(glm::translate(glm::vec3(1, 0, 0)));
 	return true;
 }
