@@ -46,10 +46,10 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="..\Shaders\TestVertShader.txt">
+    <Text Include="BasicVertShader.txt">
       <Filter>Shaders</Filter>
     </Text>
-    <Text Include="..\Shaders\TestFragShader.txt">
+    <Text Include="BasicFragShader.txt">
       <Filter>Shaders</Filter>
     </Text>
   </ItemGroup>

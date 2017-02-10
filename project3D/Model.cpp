@@ -5,81 +5,42 @@
 #include <vector>
 #include <string>
 #include <gl_core_4_4.h>
+#include <iostream>
 
 
 Model::Model()
 {
 }
 
+Model::Model(const Model & other)
+{
+	m_transform = glm::mat4(other.m_transform);
+	m_glInfo = other.m_glInfo;
+}
 
 Model::~Model()
 {
+
 }
 
-void Model::GenerateTetrahedron()
+void Model::draw(unsigned int shaderID, glm::mat4 camera, glm::vec4 camPos, float time)
 {
-	m_numVertices = 4;
-	m_vertices = new Vertex[4];
-	m_vertices[0].position = glm::vec4(0, 0.7, 0, 1);
-	m_vertices[0].color = glm::vec4(1,0,0,1);
-	m_vertices[1].position = glm::vec4(0.5, 0, 0.5, 1);
-	m_vertices[1].color = glm::vec4(0, 1, 0, 1);
-	m_vertices[2].position = glm::vec4(-0.7, 0, 0, 1);
-	m_vertices[2].color = glm::vec4(0, 0, 1, 1);
-	m_vertices[3].position = glm::vec4(0, 0, -0.7, 1);
-	m_vertices[3].color = glm::vec4(1, 1, 1, 1);
-
-	m_numIndices = 12;
-	m_indices = new unsigned int[12];
-	m_indices[0] = 1;
-	m_indices[1] = 0;
-	m_indices[2] = 2;
-
-	m_indices[3] = 2;
-	m_indices[4] = 0;
-	m_indices[5] = 3;
-
-	m_indices[6] = 3;
-	m_indices[7] = 0;
-	m_indices[8] = 1;
-
-
-	m_indices[9] = 1;
-	m_indices[10] = 2;
-	m_indices[11] = 3;
-}
-
-void Model::draw(unsigned int shaderID, glm::mat4 camera)
-{
-	unsigned int VAO, VBO, IBO;
-	
-	glGenBuffers(1, &VBO);
-	glGenBuffers(1, &IBO);
-	glGenVertexArrays(1, &VAO);
-
-	glBindVertexArray(VAO);
-
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, m_numVertices * sizeof(Vertex), m_vertices, GL_STATIC_DRAW);
-
-	glEnableVertexAttribArray(0);
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
-	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(sizeof(glm::vec4)));
-
-	
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_numIndices * sizeof(unsigned int), m_indices, GL_STATIC_DRAW);
-
 	glUseProgram(shaderID);
-	unsigned int pvu = glGetUniformLocation(shaderID, "projectionViewWorldMatrix");
-	glUniformMatrix4fv(pvu, 1, false, glm::value_ptr(camera * m_transform));
-	glDrawElements(GL_TRIANGLES, m_numIndices, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
 
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	
+	unsigned int pvw = glGetUniformLocation(shaderID, "PVW");
+	glUniformMatrix4fv(pvw, 1, false, glm::value_ptr(camera * m_transform));
+	pvw = glGetUniformLocation(shaderID, "lightDir");
+	glUniform3fv(pvw, 1, glm::value_ptr(glm::vec3(glm::half_pi<float>() / 2, 0, 0)));
+	pvw = glGetUniformLocation(shaderID, "M");
+	glUniformMatrix4fv(pvw, 1, false, glm::value_ptr(m_transform));
+	pvw = glGetUniformLocation(shaderID, "camPos");
+	glUniform4fv(pvw, 1, glm::value_ptr(camPos));
+	pvw = glGetUniformLocation(shaderID, "time");
+	glUniform1f(pvw, time);
+	for (auto& gl : m_glInfo) {
+		glBindVertexArray(gl.m_VAO);
+		glDrawArrays(GL_TRIANGLES, 0, gl.m_faceCount * 3);
+	}
 }
 
 bool Model::loadFromFile(const char * filename)
@@ -90,35 +51,61 @@ bool Model::loadFromFile(const char * filename)
 	std::string err;
 	bool ret = tinyobj::LoadObj(&attribs, &meshes, &mtl, &err, filename);
 
-	if (ret)
+	if (err.length() > 0)
 	{
-		m_numVertices = attribs.vertices.size()/3;
-		if (m_vertices != nullptr)
-			delete[] m_vertices;
-		m_vertices = new Vertex[m_numVertices];
-		for (int i = 0; i < attribs.vertices.size(); i += 3)
-		{
-			m_vertices[i / 3].position = glm::vec4(attribs.vertices[i], attribs.vertices[i + 1], attribs.vertices[i + 2], 1.0f);
-			m_vertices[i / 3].color = glm::vec4(1, 1, 0, 1);
-		}
-		m_numIndices = 0;
-		if (m_indices != nullptr)
-			delete[] m_indices;
-		for (int i = 0; i < meshes.size(); i++)
-		{
-			m_numIndices += meshes[i].mesh.indices.size();
-		}
-		m_indices = new unsigned int[m_numIndices];
-		int c_ind = 0;
-		for (int i = 0; i < meshes.size(); i++)
-		{
-			for (int j = 0; j < meshes[i].mesh.indices.size(); j++)
-			{
-				m_indices[c_ind + j] = meshes[i].mesh.indices[j].vertex_index;
-			}
-			c_ind += meshes[i].mesh.indices.size();
-		}
+		std::cout << err;
 	}
 
+	if (ret)
+	{
+		m_glInfo.resize(meshes.size());
+		// grab each shape
+		int shapeIndex = 0;
+		for (auto& shape : meshes) {
+			// setup OpenGL data 
+			glGenVertexArrays(1, &m_glInfo[shapeIndex].m_VAO);
+			glGenBuffers(1, &m_glInfo[shapeIndex].m_VBO);
+			glBindVertexArray(m_glInfo[shapeIndex].m_VAO);
+			m_glInfo[shapeIndex].m_faceCount = shape.mesh.num_face_vertices.size();
+			// collect triangle vertices 
+			std::vector<OBJVertex> vertices;
+			int index = 0;
+			for (auto face : shape.mesh.num_face_vertices) {
+				for (int i = 0; i < 3; ++i) {
+					tinyobj::index_t idx = shape.mesh.indices[index + i]; OBJVertex v = { 0 };
+					// positions
+					v.x = attribs.vertices[3 * idx.vertex_index + 0];
+					v.y = attribs.vertices[3 * idx.vertex_index + 1];
+					v.z = attribs.vertices[3 * idx.vertex_index + 2];
+					// normals
+					if (attribs.normals.size() > 0) {
+						v.nx = attribs.normals[3 * idx.normal_index + 0];
+						v.ny = attribs.normals[3 * idx.normal_index + 1];
+						v.nz = attribs.normals[3 * idx.normal_index + 2];
+					}
+					// texture coordinates 
+					if (attribs.texcoords.size() > 0) {
+						v.u = attribs.texcoords[2 * idx.texcoord_index + 0];
+						v.v = attribs.texcoords[2 * idx.texcoord_index + 1];
+					} vertices.push_back(v);
+				}
+				index += face;
+			} // bind vertex data 
+			glBindBuffer(GL_ARRAY_BUFFER, m_glInfo[shapeIndex].m_VBO);
+			glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(OBJVertex), vertices.data(), GL_STATIC_DRAW);
+			glEnableVertexAttribArray(0);
+			glEnableVertexAttribArray(1);
+			glEnableVertexAttribArray(2);
+			//position
+			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(OBJVertex), 0); glEnableVertexAttribArray(1);
+			//normal data 
+			glVertexAttribPointer(1, 3, GL_FLOAT, GL_TRUE, sizeof(OBJVertex), (void*)12); glEnableVertexAttribArray(2);
+			//texture data 
+			glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(OBJVertex), (void*)24); 
+			glBindVertexArray(0);
+			glBindBuffer(GL_ARRAY_BUFFER, 0); 
+			shapeIndex++;
+		}
+	}
 	return ret;
 }

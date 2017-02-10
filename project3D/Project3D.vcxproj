@@ -104,8 +104,8 @@
     <ClInclude Include="tiny_obj_loader.h" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="..\Shaders\TestFragShader.txt" />
-    <Text Include="..\Shaders\TestVertShader.txt" />
+    <Text Include="BasicFragShader.txt" />
+    <Text Include="BasicVertShader.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
