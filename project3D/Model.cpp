@@ -6,7 +6,7 @@
 #include <string>
 #include <gl_core_4_4.h>
 #include <iostream>
-
+#include <Texture.h>
 
 Model::Model()
 {
@@ -16,6 +16,7 @@ Model::Model(const Model & other)
 {
 	m_transform = glm::mat4(other.m_transform);
 	m_glInfo = other.m_glInfo;
+	m_texture = other.m_texture;
 }
 
 Model::~Model()
@@ -23,7 +24,7 @@ Model::~Model()
 
 }
 
-void Model::draw(unsigned int shaderID, glm::mat4 camera, glm::vec4 camPos, float time)
+void Model::draw(unsigned int shaderID, glm::mat4 camera, glm::vec4 camPos, float time, bool useTex = false)
 {
 	glUseProgram(shaderID);
 
@@ -37,6 +38,16 @@ void Model::draw(unsigned int shaderID, glm::mat4 camera, glm::vec4 camPos, floa
 	glUniform4fv(pvw, 1, glm::value_ptr(camPos));
 	pvw = glGetUniformLocation(shaderID, "time");
 	glUniform1f(pvw, time);
+	
+	if (useTex)
+	{
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, m_texture);
+
+		pvw = glGetUniformLocation(shaderID, "diffuse");
+		glUniform1i(pvw, 0);
+	}
+
 	for (auto& gl : m_glInfo) {
 		glBindVertexArray(gl.m_VAO);
 		glDrawArrays(GL_TRIANGLES, 0, gl.m_faceCount * 3);
@@ -97,9 +108,9 @@ bool Model::loadFromFile(const char * filename)
 			glEnableVertexAttribArray(1);
 			glEnableVertexAttribArray(2);
 			//position
-			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(OBJVertex), 0); glEnableVertexAttribArray(1);
+			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(OBJVertex), 0);
 			//normal data 
-			glVertexAttribPointer(1, 3, GL_FLOAT, GL_TRUE, sizeof(OBJVertex), (void*)12); glEnableVertexAttribArray(2);
+			glVertexAttribPointer(1, 3, GL_FLOAT, GL_TRUE, sizeof(OBJVertex), (void*)12);
 			//texture data 
 			glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(OBJVertex), (void*)24); 
 			glBindVertexArray(0);
@@ -108,4 +119,16 @@ bool Model::loadFromFile(const char * filename)
 		}
 	}
 	return ret;
+}
+
+void Model::loadTex(const char * filename)
+{
+	aie::Texture t;
+	t.load(filename);
+	glGenTextures(1, &m_texture);
+	glBindTexture(GL_TEXTURE_2D, m_texture);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, t.getWidth(), t.getHeight(), 0, GL_RGB, GL_UNSIGNED_BYTE, t.getPixels());
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glBindTexture(GL_TEXTURE_2D, 0);
 }

@@ -38,13 +38,15 @@ bool Application3D::startup() {
 
 	m_mainShader->CompileShaders("C:/Users/s171558/Documents/Graphics-Engine-Major-Project/project3D/BasicVertShader.txt", "C:/Users/s171558/Documents/Graphics-Engine-Major-Project/project3D/BasicFragShader.txt");
 	m_testModel = new Model[5];
-	m_testModel->loadFromFile("C:/Users/s171558/Documents/Graphics-Engine-Major-Project/Meshes/Bunny.obj");
+	m_testModel->loadFromFile("C:/Users/s171558/Documents/Graphics-Engine-Major-Project/Meshes/Sphere.obj");
+	m_testModel->loadTex("C:/Users/s171558/Documents/Graphics-Engine-Major-Project/Textures/woodtex.jpg");
 	//m_testModel->GenerateTetrahedron();
-	m_testModel->setTransform(glm::translate(glm::vec3(rand() / (float)INT16_MAX - 0.5f, rand() / (float)INT16_MAX - 0.5f, rand() / (float)INT16_MAX - 0.5f) * 20)/* * glm::scale(glm::vec3(0.1f)) */ );
+	//m_testModel->setTransform(glm::translate(glm::vec3(rand() / (float)INT16_MAX - 0.5f, rand() / (float)INT16_MAX - 0.5f, rand() / (float)INT16_MAX - 0.5f) * 20)/* * glm::scale(glm::vec3(0.1f)) */ );
 	for (int i = 1; i < 5; i++)
 	{
 		m_testModel[i] = Model(*m_testModel);
-		m_testModel[i].setTransform(glm::translate(glm::vec3((rand()/(float)INT16_MAX) - 0.5f, (rand() / (float)INT16_MAX) - 0.5f, (rand() / (float)INT16_MAX) - 0.5f) * 20)/* * glm::scale(glm::vec3(0.1f)) */);
+		m_testModel[i].setTransform(glm::translate(glm::vec3(i * 5, 0, i * 5)));
+		//m_testModel[i].setTransform(glm::translate(glm::vec3((rand()/(float)INT16_MAX) - 0.5f, (rand() / (float)INT16_MAX) - 0.5f, (rand() / (float)INT16_MAX) - 0.5f) * 20)/* * glm::scale(glm::vec3(0.1f)) */);
 	}
 	return true;
 }
@@ -95,8 +97,8 @@ void Application3D::update(float deltaTime) {
 	//rotate camera
 	 m_viewMatrix = glm::inverse(m_camTransform);
 
-	 m_lMX = mx;
-	 m_lMY = my;
+	 m_lMX = (float)mx;
+	 m_lMY = (float)my;
 
 	 //m_FOV += -((float)input->getMouseScroll() - m_LSCRL) * deltaTime;
 	 m_LSCRL = (float)input->getMouseScroll();
@@ -117,7 +119,7 @@ void Application3D::draw() {
 	
 	for (int i = 0; i < 5; i++)
 	{
-		m_testModel[i].draw(m_mainShader->GetID(), m_projectionMatrix * m_viewMatrix, m_camTransform[3], getTime());
+		m_testModel[i].draw(m_mainShader->GetID(), m_projectionMatrix * m_viewMatrix, m_camTransform[3], getTime(), true);
 	}
 	Gizmos::draw(m_projectionMatrix * m_viewMatrix);
 }

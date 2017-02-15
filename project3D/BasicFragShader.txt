@@ -1,16 +1,19 @@
 #version 410
 in vec4 worldNorm;
 in vec4 worldPos;
+in vec2 uv;
 out vec4 fragColor;
 
 uniform vec3 lightDir;
 uniform vec4 camPos;
+uniform sampler2D diffuse;
 
 void main() { 
-	vec4 diffuse = vec4(vec3(1, 0, 0) * clamp(dot(worldNorm.xyz, lightDir), 0, 1) + 0.1, 1);
+	vec4 diffuseColor = texture(diffuse, uv);
+	vec4 diffuseLight = diffuseColor * clamp(dot(worldNorm.xyz, lightDir), 0, 1);
 	vec4 toCamera = normalize(worldPos - camPos);
 	vec4 refl = reflect(toCamera, worldNorm);
-	float scalarSpec = pow(clamp(dot(refl.xyz,lightDir),0,1), 6);
-	vec4 spec = vec4(vec3(1, 1, 1) * scalarSpec, 1);
-	fragColor = diffuse + spec;
+	float scalarSpec = pow(clamp(dot(refl.xyz,lightDir),0,1), 10);
+	vec4 spec = vec4(vec3(1, 1, 1) * scalarSpec, 0);
+	fragColor = vec4((diffuseLight + (10*spec) + (diffuseColor * vec4(0.1f, 0.1f, 0.1f, 0))).xyz, diffuseColor.w);
 }

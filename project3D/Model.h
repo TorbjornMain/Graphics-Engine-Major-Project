@@ -21,12 +21,14 @@ public:
 	Model(const Model &other);
 	~Model();
 
-	void draw(unsigned int shaderID, glm::mat4 camera, glm::vec4 camPos, float time);
+	void draw(unsigned int shaderID, glm::mat4 camera, glm::vec4 camPos, float time, bool useTex);
 	void setTransform(glm::mat4 trans) { m_transform = trans; }
 	bool loadFromFile(const char* filename);
 	glm::mat4 getTransform() { return m_transform; }
+	void loadTex(const char* filename);
 private:
 	std::vector<OpenGLInfo> m_glInfo;
 	glm::mat4 m_transform;
+	unsigned int m_texture;
 };
 
