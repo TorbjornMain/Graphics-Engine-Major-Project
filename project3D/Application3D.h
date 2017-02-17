@@ -5,6 +5,7 @@
 
 class Shader;
 class Model;
+class Instance;
 
 class Application3D : public aie::Application {
 public:
@@ -24,5 +25,6 @@ protected:
 	glm::mat4	m_projectionMatrix;
 	Shader*		m_mainShader;
 	Model*		m_testModel;
+	Instance*	m_testInstances;
 	float m_lMX, m_lMY, m_FOV, m_LSCRL;
 };

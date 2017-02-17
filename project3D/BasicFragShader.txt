@@ -1,4 +1,6 @@
 #version 410
+in vec4 worldTangent;
+in vec4 worldBiTangent;
 in vec4 worldNorm;
 in vec4 worldPos;
 in vec2 uv;
@@ -6,14 +8,22 @@ out vec4 fragColor;
 
 uniform vec3 lightDir;
 uniform vec4 camPos;
-uniform sampler2D diffuse;
+uniform sampler2D atlas;
 
 void main() { 
-	vec4 diffuseColor = texture(diffuse, uv);
-	vec4 diffuseLight = diffuseColor * clamp(dot(worldNorm.xyz, lightDir), 0, 1);
+	mat3 TBN = mat3(normalize(worldTangent).xyz, normalize(worldBiTangent).xyz, normalize(worldNorm).xyz);
+	
+	vec3 N = (texture(atlas, clamp(uv/2, vec2(0), vec2(0.49)) + vec2(0, 0.5)).xyz * 2) - 1;
+
+	float directionalLight = max(0, dot(normalize(TBN*N), normalize(lightDir)));
+
+
+	vec4 diffuseColor = texture(atlas, clamp(uv/2, vec2(0), vec2(0.49)));
+	vec4 specColor = texture(atlas, clamp(uv/2, vec2(0), vec2(0.49)) + vec2(0.5,0));
+	vec4 diffuseLight = vec4(diffuseColor.xyz * directionalLight, 1);
 	vec4 toCamera = normalize(worldPos - camPos);
 	vec4 refl = reflect(toCamera, worldNorm);
 	float scalarSpec = pow(clamp(dot(refl.xyz,lightDir),0,1), 10);
-	vec4 spec = vec4(vec3(1, 1, 1) * scalarSpec, 0);
+	vec4 spec = vec4(specColor.xyz * scalarSpec, 0);
 	fragColor = vec4((diffuseLight + (10*spec) + (diffuseColor * vec4(0.1f, 0.1f, 0.1f, 0))).xyz, diffuseColor.w);
 }

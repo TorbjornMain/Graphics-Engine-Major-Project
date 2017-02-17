@@ -2,6 +2,14 @@
 layout(location=0) in vec3 position;
 layout(location=1) in vec3 normal;
 layout(location=2) in vec2 uvs; 
+layout(location=3) in vec3 tangent;
+layout(location=4) in vec4 weight;
+layout(location=5) in vec4 index;
+
+
+
+
+const int MAX_BONES = 128;
 
 uniform mat4 PVW;
 
@@ -9,14 +17,26 @@ uniform mat4 M;
 
 uniform float time;
 
+uniform int animated;
+
+uniform mat4 bones[MAX_BONES];
+
+out vec4 worldBiTangent;
+out vec4 worldTangent;
 out vec4 worldNorm;
 out vec4 worldPos;
 out vec2 uv;
 
 void main() {  
-	vec3 P = position;
+	vec4 P = bones[int(index.x)] * vec4(position,1) * weight.x;
+	P += bones[int(index.y)] * vec4(position,1) * weight.y;
+	P += bones[int(index.z)] * vec4(position,1) * weight.z;
+	P += bones[int(index.w)] * vec4(position,1) * weight.w;
+	P = (animated * P) + ((1-animated) * vec4(position,1));
 	uv = uvs;
-	worldNorm = (M * vec4(normal,0));
-	worldPos = (M*vec4(P,1));
-	gl_Position = PVW * vec4(P, 1);
+	worldNorm = normalize(M * vec4(normal,0));
+	worldTangent = normalize(M*vec4(tangent, 0));
+	worldBiTangent = vec4(cross((M * vec4(normal,0)).xyz, (M*vec4(tangent, 0)).xyz), 0);
+	worldPos = (M*P);
+	gl_Position = PVW * P;
 }
