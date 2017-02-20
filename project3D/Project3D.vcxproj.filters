@@ -52,5 +52,11 @@
     <Text Include="BasicFragShader.txt">
       <Filter>Shaders</Filter>
     </Text>
+    <Text Include="PBRFragShader.txt">
+      <Filter>Shaders</Filter>
+    </Text>
+    <Text Include="PBRFragShaderNoUV.txt">
+      <Filter>Shaders</Filter>
+    </Text>
   </ItemGroup>
 </Project>

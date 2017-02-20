@@ -39,6 +39,11 @@ private:
 
 class Instance
 {
+public:
+	Instance();
+	~Instance();
+	Instance(const Instance &other);
+
 	void setTransform(glm::mat4 trans) { m_transform = trans; }
 	glm::mat4 getTransform() { return m_transform; }
 
@@ -46,7 +51,10 @@ class Instance
 	void setTexture(unsigned int tex) { m_texture = tex; }
 
 	unsigned int getShader() { return m_shader; }
-	void setshader(unsigned int shad) { m_shader = shad; }
+	void setShader(unsigned int shad) { m_shader = shad; }
+
+	Model* getModel() { return m_model; }
+	void setModel(Model* model) { m_model = model; }
 
 	void loadTex(const char * filename);
 

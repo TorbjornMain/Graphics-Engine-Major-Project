@@ -1,0 +1,54 @@
+#version 410
+in vec4 worldTangent;
+in vec4 worldBiTangent;
+in vec4 worldNorm;
+in vec4 worldPos;
+in vec2 uv;
+out vec4 fragColor;
+
+uniform vec3 lightDir;
+uniform vec4 camPos;
+uniform sampler2D atlas;
+uniform float roughness = 1;
+uniform float reflection = 0.1;
+
+void main() {
+	//mat3 TBN = mat3(normalize(worldTangent).xyz, normalize(worldBiTangent).xyz, normalize(worldNorm).xyz);	
+	//vec3 N = normalize((texture(atlas, clamp(uv/2, vec2(0), vec2(0.49)) + vec2(0, 0.5)).xyz * 2) - 1);
+	//N = TBN * N;
+	vec3 N = worldNorm.xyz;
+	
+	float NdotL = dot(N, lightDir);
+	vec3 surfToViewer = normalize(camPos.xyz - worldPos.xyz);
+	float NdotE = dot(N, surfToViewer);
+	
+	
+	float A = 1-(0.5*((roughness * roughness)/((roughness * roughness) + 0.57)));
+	float B = 0.45*((roughness * roughness)/((roughness * roughness) + 0.09));
+	
+	
+	float CX = dot(surfToViewer - N*(NdotE), lightDir - N*(NdotL));
+	float DX = sin(max(acos(NdotE), acos(NdotL))) * tan(min(acos(NdotE), acos(NdotL)));
+	
+	
+	vec4 diffuseColor = vec4(1);
+	vec4 diffuseLight =  vec4(diffuseColor.xyz * max(0, NdotL)  * (A + (B * max(0,CX) * DX)), diffuseColor.w);
+
+	vec3 H = normalize(lightDir + surfToViewer);
+	float NdotH = max(dot(N, H), 0.0f);
+	float expon = -(1-(NdotH*NdotH))/(NdotH * NdotH * roughness * roughness);
+	float distribution = exp(expon)/(roughness * roughness * pow(NdotH,4));
+	
+	float fresnel = reflection + ((1-reflection)*pow(1-NdotE, 5));
+
+	float X = 2 * NdotH / dot(surfToViewer, H);
+	float geomAtten = min(1, min(X * NdotE, X * NdotL));
+	
+	vec4 specColor = vec4(1, 1, 1, 0);
+	
+	float scalarSpec = max((distribution * fresnel * geomAtten) / (3.1415926536f * NdotE), 0);
+
+	vec4 specLight = vec4(specColor.xyz * scalarSpec, 0);
+
+	fragColor = diffuseLight + specLight;
+}

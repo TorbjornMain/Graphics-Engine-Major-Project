@@ -47,7 +47,7 @@ void Model::draw(unsigned int shaderID, glm::mat4 camera, glm::vec4 camPos, floa
 	unsigned int pvw = glGetUniformLocation(shaderID, "PVW");
 	glUniformMatrix4fv(pvw, 1, false, glm::value_ptr(camera * transform));
 	pvw = glGetUniformLocation(shaderID, "lightDir");
-	glUniform3fv(pvw, 1, glm::value_ptr(glm::vec3(glm::half_pi<float>() / 2, 0, 0)));
+	glUniform3fv(pvw, 1, glm::value_ptr(glm::vec3(0, 1, 1)));
 	pvw = glGetUniformLocation(shaderID, "M");
 	glUniformMatrix4fv(pvw, 1, false, glm::value_ptr(transform));
 	pvw = glGetUniformLocation(shaderID, "camPos");
@@ -200,6 +200,22 @@ bool Model::loadFromFBX(const char * filename)
 
 	return ret;
 
+}
+
+Instance::Instance()
+{
+}
+
+Instance::~Instance()
+{
+}
+
+Instance::Instance(const Instance & other)
+{
+	m_transform = other.m_transform;
+	m_texture = other.m_texture;
+	m_shader = other.m_shader;
+	m_model = other.m_model;
 }
 
 void Instance::loadTex(const char * filename)
