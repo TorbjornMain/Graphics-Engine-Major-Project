@@ -15,7 +15,7 @@ uniform mat4 PVW;
 
 uniform mat4 M;
 
-uniform float time;
+
 
 uniform int animated;
 

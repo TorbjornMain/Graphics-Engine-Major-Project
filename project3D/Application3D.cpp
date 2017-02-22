@@ -39,21 +39,21 @@ bool Application3D::startup() {
 	m_FOV = glm::pi<float>() * 0.5f;
 	m_mainShader = new Shader();
 
-	m_mainShader->CompileShaders("C:/Users/Zac/Documents/Graphics-Engine-Major-Project/project3D/BasicVertShader.txt", "C:/Users/Zac/Documents/Graphics-Engine-Major-Project/project3D/PBRFragShaderNoUV.txt");
+	m_mainShader->CompileShaders("C:/Users/s171558/Documents/Graphics-Engine-Major-Project/project3D/BasicVertShader.txt", "C:/Users/s171558/Documents/Graphics-Engine-Major-Project/project3D/PBRFragShaderNoUV.txt");
 	m_testModel = new Model();
 	//m_testModel->loadFromOBJ("C:/Users/s171558/Documents/Graphics-Engine-Major-Project/Meshes/Bunny.obj");
-	m_testModel->loadFromFBX("C:/Users/Zac/Documents/Graphics-Engine-Major-Project/Meshes/bunny.obj");
+	m_testModel->loadFromFBX("C:/Users/s171558/Documents/Graphics-Engine-Major-Project/Meshes/mecanimloco.fbx");
 	m_testInstances = new Instance[5];
-	m_testInstances->loadTex("C:/Users/Zac/Documents/Graphics-Engine-Major-Project/Textures/woodtex.jpg");
+	m_testInstances->loadTex("C:/Users/s171558/Documents/Graphics-Engine-Major-Project/Textures/woodtex.jpg");
 	m_testInstances->setShader(m_mainShader->GetID());
 	m_testInstances->setModel(m_testModel);
 	//m_testModel->GenerateTetrahedron();
-	m_testInstances->setTransform(glm::scale(vec3(0.1f)));
+	m_testInstances->setTransform(glm::scale(vec3(10)));
 	for (int i = 1; i < 5; i++)
 	{
 		m_testInstances[i] = Instance(*m_testInstances);
 		//m_testInstances[i].setTransform(glm::translate(glm::vec3(i * 5, 0, i * 5)) * glm::scale(vec3(0.01f)));
-		m_testInstances[i].setTransform(glm::translate(glm::vec3((rand()/(float)INT16_MAX) - 0.5f, (rand() / (float)INT16_MAX) - 0.5f, (rand() / (float)INT16_MAX) - 0.5f) * 20) * glm::scale(glm::vec3(0.1f)));
+		m_testInstances[i].setTransform(glm::translate(glm::vec3((rand() / (float)INT16_MAX) - 0.5f, (rand() / (float)INT16_MAX) - 0.5f, (rand() / (float)INT16_MAX) - 0.5f) * 20) * glm::scale(glm::vec3(10)));
 	}
 	return true;
 }
