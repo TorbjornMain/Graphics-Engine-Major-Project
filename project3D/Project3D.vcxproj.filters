@@ -30,6 +30,12 @@
     <ClCompile Include="Shader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="FrameBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application3D.h">
@@ -44,6 +50,12 @@
     <ClInclude Include="tiny_obj_loader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="FrameBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="BasicVertShader.txt">
@@ -56,6 +68,9 @@
       <Filter>Shaders</Filter>
     </Text>
     <Text Include="PBRFragShaderNoUV.txt">
+      <Filter>Shaders</Filter>
+    </Text>
+    <Text Include="BasicFragShaderNoAtlas.txt">
       <Filter>Shaders</Filter>
     </Text>
   </ItemGroup>

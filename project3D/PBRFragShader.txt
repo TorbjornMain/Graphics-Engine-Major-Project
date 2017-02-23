@@ -51,4 +51,5 @@ void main() {
 	vec4 specLight = vec4(specColor.xyz * scalarSpec, 0);
 
 	fragColor = diffuseLight + specLight;
+
 }

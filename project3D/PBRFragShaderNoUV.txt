@@ -34,7 +34,7 @@ void main() {
 	float DX = sin(max(acos(NdotE), acos(NdotL))) * tan(min(acos(NdotE), acos(NdotL)));
 	
 	
-	vec4 diffuseColor = vec4(0, 1, 0, 1);
+	vec4 diffuseColor = vec4(0, 0, 1, 1);
 	vec3 diffuseLight =  diffuseColor.xyz * max(0, NdotL)  * (A + (B * max(0,CX) * DX));
 
 	vec3 H = normalize(lightDir + surfToViewer);
@@ -47,7 +47,7 @@ void main() {
 	float X = 2 * NdotH / dot(surfToViewer, H);
 	float geomAtten = min(1, min(X * NdotE, X * NdotL));
 	
-	vec3 specColor = vec3(1, -1, 1);
+	vec3 specColor = vec3(1, 0, 0);
 	
 	float scalarSpec = max((distribution * fresnel * geomAtten) / (3.1415926536f * NdotE), 0);
 

@@ -24,8 +24,10 @@ Application3D::~Application3D() {
 }
 
 bool Application3D::startup() {
-	
+	m_scene = Scene();
 	setBackgroundColour(0.25f, 0.25f, 0.25f);
+
+	m_fb = FrameBuffer(1024, 1024);
 
 	// initialise gizmo primitive counts
 	Gizmos::create(10000, 10000, 10000, 10000);
@@ -37,24 +39,18 @@ bool Application3D::startup() {
 										  getWindowWidth() / (float)getWindowHeight(),
 										  0.1f, 1000.f);
 	m_FOV = glm::pi<float>() * 0.5f;
-	m_mainShader = new Shader();
+	
+	m_fb.GenBuffer();
 
-	m_mainShader->CompileShaders("C:/Users/s171558/Documents/Graphics-Engine-Major-Project/project3D/BasicVertShader.txt", "C:/Users/s171558/Documents/Graphics-Engine-Major-Project/project3D/PBRFragShaderNoUV.txt");
+	m_mainShader = new Shader();
+	m_mainShader->CompileShaders("C:/Users/s171558/Documents/Graphics-Engine-Major-Project/project3D/BasicVertShader.txt", "C:/Users/s171558/Documents/Graphics-Engine-Major-Project/project3D/PBRFragShader.txt");
 	m_testModel = new Model();
 	//m_testModel->loadFromOBJ("C:/Users/s171558/Documents/Graphics-Engine-Major-Project/Meshes/Bunny.obj");
-	m_testModel->loadFromFBX("C:/Users/s171558/Documents/Graphics-Engine-Major-Project/Meshes/mecanimloco.fbx");
-	m_testInstances = new Instance[5];
-	m_testInstances->loadTex("C:/Users/s171558/Documents/Graphics-Engine-Major-Project/Textures/woodtex.jpg");
-	m_testInstances->setShader(m_mainShader->GetID());
-	m_testInstances->setModel(m_testModel);
-	//m_testModel->GenerateTetrahedron();
-	m_testInstances->setTransform(glm::scale(vec3(10)));
-	for (int i = 1; i < 5; i++)
-	{
-		m_testInstances[i] = Instance(*m_testInstances);
-		//m_testInstances[i].setTransform(glm::translate(glm::vec3(i * 5, 0, i * 5)) * glm::scale(vec3(0.01f)));
-		m_testInstances[i].setTransform(glm::translate(glm::vec3((rand() / (float)INT16_MAX) - 0.5f, (rand() / (float)INT16_MAX) - 0.5f, (rand() / (float)INT16_MAX) - 0.5f) * 20) * glm::scale(glm::vec3(10)));
-	}
+	m_testModel->loadFromFBX("C:/Users/s171558/Documents/Graphics-Engine-Major-Project/Meshes/bunny.obj");
+	m_scene.AddInstance("spicy boi", m_testModel, m_mainShader->GetID(), "C:/Users/s171558/Documents/Graphics-Engine-Major-Project/Textures/woodtex.jpg", glm::translate(glm::vec3((rand() / (float)INT16_MAX) - 0.5f, (rand() / (float)INT16_MAX) - 0.5f, (rand() / (float)INT16_MAX) - 0.5f) * 20) * glm::scale(glm::vec3(0.1f)));
+	m_mainShader->CompileShaders("C:/Users/s171558/Documents/Graphics-Engine-Major-Project/project3D/BasicVertShader.txt", "C:/Users/s171558/Documents/Graphics-Engine-Major-Project/project3D/BasicFragShaderNoAtlas.txt");
+	m_scene.AddInstance("angry boi", m_testModel, m_mainShader->GetID(), m_fb.getTex() , glm::translate(glm::vec3((rand() / (float)INT16_MAX) - 0.5f, (rand() / (float)INT16_MAX) - 0.5f, (rand() / (float)INT16_MAX) - 0.5f) * 20) * glm::scale(glm::vec3(0.10f)));
+	
 	return true;
 }
 
@@ -115,18 +111,26 @@ void Application3D::update(float deltaTime) {
 
 void Application3D::draw() {
 
+	// update perspective in case window resized
+	m_projectionMatrix = glm::perspective(m_FOV,
+		getWindowWidth() / (float)getWindowHeight(),
+		0.1f, 1000.f);
+
+	Camera c = Camera();
+	c.m_projection = m_projectionMatrix;
+	c.m_view = m_viewMatrix;
+	c.m_transform = m_camTransform;
+	m_scene.setCamera(c);
+
+	m_scene.drawToRenderTarget(c, m_fb, getTime());
+
 	// wipe the screen to the background colour
 	clearScreen();
 
-	// update perspective in case window resized
-	m_projectionMatrix = glm::perspective(m_FOV,
-										  getWindowWidth() / (float)getWindowHeight(),
-										  0.1f, 1000.f);
 
 	
-	for (int i = 0; i < 5; i++)
-	{
-		m_testInstances[i].draw(m_projectionMatrix * m_viewMatrix, glm::column(m_camTransform, 3), getTime(), getTime()+i);
-	}
+
+	
+	m_scene.draw(getTime());
 	Gizmos::draw(m_projectionMatrix * m_viewMatrix);
 }
