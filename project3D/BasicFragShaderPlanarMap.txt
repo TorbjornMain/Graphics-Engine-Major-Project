@@ -18,13 +18,13 @@ void main() {
 	float directionalLight = max(0, dot(normalize(N), normalize(lightDir)));
 
 
-	vec4 diffuseColor = texture(atlas, uv);
+	vec4 diffuseColor = texture(atlas, worldNorm.xy);
 	vec4 specColor = vec4(1, 1, 1, 0);
 	vec4 diffuseLight = vec4(diffuseColor.xyz * directionalLight, 1);
 	vec4 toCamera = normalize(worldPos - camPos);
 	vec4 refl = reflect(toCamera, worldNorm);
 	float scalarSpec = pow(clamp(dot(refl.xyz,lightDir),0,1), 10);
 	vec4 spec = vec4(specColor.xyz * scalarSpec, 0);
-	fragColor = vec4((diffuseLight + (10*spec) + (diffuseColor * vec4(0.1f, 0.1f, 0.1f, 0))).xyz, diffuseColor.w);
+	fragColor = vec4((diffuseLight + (1*spec) + (diffuseColor * vec4(0.1f, 0.1f, 0.1f, 0))).xyz, diffuseColor.w);
 
 }

@@ -70,7 +70,7 @@
     <Text Include="PBRFragShaderNoUV.txt">
       <Filter>Shaders</Filter>
     </Text>
-    <Text Include="BasicFragShaderNoAtlas.txt">
+    <Text Include="BasicFragShaderPlanarMap.txt">
       <Filter>Shaders</Filter>
     </Text>
   </ItemGroup>

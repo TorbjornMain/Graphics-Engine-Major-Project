@@ -109,7 +109,7 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="BasicFragShader.txt" />
-    <Text Include="BasicFragShaderNoAtlas.txt" />
+    <Text Include="BasicFragShaderPlanarMap.txt" />
     <Text Include="BasicVertShader.txt" />
     <Text Include="PBRFragShader.txt" />
     <Text Include="PBRFragShaderNoUV.txt" />
