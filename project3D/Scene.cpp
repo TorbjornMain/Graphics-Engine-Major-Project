@@ -34,14 +34,14 @@ void Scene::draw(float time)
 	}
 }
 
-void Scene::AddInstance(char * name, Model * model, unsigned int shader, unsigned int texture, glm::mat4 transform)
+void Scene::AddInstance(char* name, Model * model, unsigned int shader, unsigned int texture, glm::mat4 transform)
 {
 	Instance ins = Instance();
 	ins.setModel(model);
 	ins.setShader(shader);
 	ins.setTexture(texture);
 	ins.setTransform(transform);
-	m_instances.insert_or_assign(name, ins);
+	m_instances.insert(std::pair<char*, Instance>(name, ins));
 }
 
 void Scene::AddInstance(char * name, Model * model, unsigned int shader, const char * textureFile, glm::mat4 transform)
@@ -51,7 +51,7 @@ void Scene::AddInstance(char * name, Model * model, unsigned int shader, const c
 	ins.setShader(shader);
 	ins.loadTex(textureFile);
 	ins.setTransform(transform);
-	m_instances.insert_or_assign(name, ins);
+	m_instances.insert(std::pair<char*, Instance>(name, ins));
 }
 
 Instance & Scene::GetInstance(char * name)

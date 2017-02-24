@@ -2,6 +2,7 @@
 #include <glm\glm.hpp>
 #include <glm\ext.hpp>
 #include <FBXFile.h>
+#include "FrameBuffer.h"
 
 struct OpenGLInfo { 
 	unsigned int m_VAO; 
@@ -26,10 +27,12 @@ public:
 
 	void update(float time);
 	void draw(unsigned int shaderID, glm::mat4 camera, glm::vec4 camPos, float time, unsigned int textureID, glm::mat4 transform);
+	void drawPostProcessQuad(unsigned int shaderID, FrameBuffer buf);
 
-	bool loadFromOBJ(const char* filename);
 	bool loadFromFBX(const char* filename);
-	
+	void generateScreenSpaceQuad();
+
+
 	bool getIsAnimated() { return m_isAnimated; }
 private:
 	std::vector<OpenGLInfo> m_glInfo;

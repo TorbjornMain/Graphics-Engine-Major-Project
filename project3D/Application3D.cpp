@@ -5,7 +5,9 @@
 #include <glm/ext.hpp>
 #include "Model.h"
 #include "Shader.h"
+#include <string>
 #include <iostream>
+#include <imgui.h>
 
 #define HOME_PATH "C:/Users/Zac/Documents/Graphics-Engine-Major-Project/"
 #define AIE_PATH "C:/Users/s171558/Documents/Graphics-Engine-Major-Project/"
@@ -27,7 +29,7 @@ bool Application3D::startup() {
 	m_scene = Scene();
 	setBackgroundColour(0.25f, 0.25f, 0.25f);
 
-	m_fb = FrameBuffer(1024, 1024);
+	m_fb = FrameBuffer(1280, 720);
 
 	// initialise gizmo primitive counts
 	Gizmos::create(10000, 10000, 10000, 10000);
@@ -43,14 +45,24 @@ bool Application3D::startup() {
 	m_fb.GenBuffer();
 
 	m_mainShader = new Shader();
-	m_mainShader->CompileShaders("C:/Users/Zac/Documents/Graphics-Engine-Major-Project/project3D/BasicVertShader.txt", "C:/Users/Zac/Documents/Graphics-Engine-Major-Project/project3D/PBRFragShader.txt");
+	m_mainShader->CompileShaders("C:/Users/s171558/Documents/Graphics-Engine-Major-Project/project3D/BasicVertShader.txt", "C:/Users/s171558/Documents/Graphics-Engine-Major-Project/project3D/PBRFragShader.txt");
 	m_testModel = new Model();
 	//m_testModel->loadFromOBJ("C:/Users/s171558/Documents/Graphics-Engine-Major-Project/Meshes/Bunny.obj");
-	m_testModel->loadFromFBX("C:/Users/Zac/Documents/Graphics-Engine-Major-Project/Meshes/mecanimloco.fbx");
-	m_scene.AddInstance("spicy boi", m_testModel, m_mainShader->GetID(), "C:/Users/Zac/Documents/Graphics-Engine-Major-Project/Textures/woodtex.jpg", glm::translate(glm::vec3((rand() / (float)INT16_MAX) - 0.5f, (rand() / (float)INT16_MAX) - 0.5f, (rand() / (float)INT16_MAX) - 0.5f) * 20) * glm::scale(glm::vec3(10.f)));
-	m_mainShader->CompileShaders("C:/Users/Zac/Documents/Graphics-Engine-Major-Project/project3D/BasicVertShader.txt", "C:/Users/Zac/Documents/Graphics-Engine-Major-Project/project3D/BasicFragShaderPlanarMap.txt");
-	m_scene.AddInstance("angry boi", m_testModel, m_mainShader->GetID(), m_fb.getTex() , glm::translate(glm::vec3((rand() / (float)INT16_MAX) - 0.5f, (rand() / (float)INT16_MAX) - 0.5f, (rand() / (float)INT16_MAX) - 0.5f) * 20) * glm::scale(glm::vec3(10.f)));
+	m_testModel->loadFromFBX("C:/Users/s171558/Documents/Graphics-Engine-Major-Project/Meshes/mecanimloco.fbx");
+	m_scene.AddInstance("spicy boi", m_testModel, m_mainShader->GetID(), "C:/Users/s171558/Documents/Graphics-Engine-Major-Project/Textures/woodtex.jpg", glm::translate(glm::vec3((rand() / (float)INT16_MAX) - 0.5f, (rand() / (float)INT16_MAX) - 0.5f, (rand() / (float)INT16_MAX) - 0.5f) * 20) * glm::scale(glm::vec3(10.f)));
+	m_mainShader->CompileShaders("C:/Users/s171558/Documents/Graphics-Engine-Major-Project/project3D/BasicVertShader.txt", "C:/Users/s171558/Documents/Graphics-Engine-Major-Project/project3D/BasicFragShaderPlanarMap.txt");
+	m_scene.AddInstance("angry boi", m_testModel, m_mainShader->GetID(), "C:/Users/s171558/Documents/Graphics-Engine-Major-Project/Textures/woodtex.jpg" , glm::translate(glm::vec3((rand() / (float)INT16_MAX) - 0.5f, (rand() / (float)INT16_MAX) - 0.5f, (rand() / (float)INT16_MAX) - 0.5f) * 20) * glm::scale(glm::vec3(10.f)));
 	
+	std::string st = "a";
+	for (int i = 0; i < 15; i++)
+	{
+		st = st + st;
+		m_scene.AddInstance(const_cast<char*>(st.c_str()), m_testModel, m_mainShader->GetID(), "C:/Users/s171558/Documents/Graphics-Engine-Major-Project/Textures/woodtex.jpg", glm::translate(glm::vec3((rand() / (float)INT16_MAX) - 0.5f, (rand() / (float)INT16_MAX) - 0.5f, (rand() / (float)INT16_MAX) - 0.5f) * 20) * glm::scale(glm::vec3(10.f)));
+	}
+	m_mainShader->CompileShaders("C:/Users/s171558/Documents/Graphics-Engine-Major-Project/project3D/PostProcessVert.txt","C:/Users/s171558/Documents/Graphics-Engine-Major-Project/project3D/DepthFogFrag.txt");
+	m_ppModel = new Model();
+	m_ppModel->generateScreenSpaceQuad();
+
 	return true;
 }
 
@@ -103,6 +115,11 @@ void Application3D::update(float deltaTime) {
 	 m_lMX = (float)mx;
 	 m_lMY = (float)my;
 
+
+	 ImGui::Begin(std::to_string(m_fps).c_str());
+	 ImGui::Button("                ");
+	 ImGui::End();
+
 	 //m_FOV += -((float)input->getMouseScroll() - m_LSCRL) * deltaTime;
 	 m_LSCRL = (float)input->getMouseScroll();
 	 if (input->isKeyDown(aie::INPUT_KEY_ESCAPE))
@@ -123,14 +140,16 @@ void Application3D::draw() {
 	m_scene.setCamera(c);
 
 	m_scene.drawToRenderTarget(c, m_fb, getTime());
+
 	setBackgroundColour(0.25f, 0.25f, 0.25f);
 	// wipe the screen to the background colour
 	clearScreen();
+	
 
 
 	
+	//m_scene.draw(getTime());
+	//Gizmos::draw(m_projectionMatrix * m_viewMatrix);
 
-	
-	m_scene.draw(getTime());
-	Gizmos::draw(m_projectionMatrix * m_viewMatrix);
+	m_ppModel->drawPostProcessQuad(m_mainShader->GetID(), m_fb);
 }

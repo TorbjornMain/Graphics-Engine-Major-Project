@@ -77,77 +77,33 @@ void Model::draw(unsigned int shaderID, glm::mat4 camera, glm::vec4 camPos, floa
 	for (auto& gl : m_glInfo) {
 		glBindVertexArray(gl.m_VAO);
 		if (gl.m_IBO == -1)
-			glDrawArrays(GL_TRIANGLES, 0, gl.m_faceCount * 3);
+			glDrawArrays(GL_TRIANGLES, 0, gl.m_faceCount);
 		else
 			glDrawElements(GL_TRIANGLES, gl.m_faceCount * 3, GL_UNSIGNED_INT, 0);
 	}
 }
 
-bool Model::loadFromOBJ(const char * filename)
+void Model::drawPostProcessQuad(unsigned int shaderID, FrameBuffer buf)
 {
-	tinyobj::attrib_t attribs;
-	std::vector<tinyobj::shape_t> meshes;
-	std::vector <tinyobj::material_t> mtl;
-	std::string err;
-	bool ret = tinyobj::LoadObj(&attribs, &meshes, &mtl, &err, filename);
+	glUseProgram(shaderID);
 
-	if (err.length() > 0)
-	{
-		std::cout << err;
-	}
+	unsigned int pvw;
 
-	if (ret)
-	{
-		m_glInfo.resize(meshes.size());
-		// grab each shape
-		int shapeIndex = 0;
-		for (auto& shape : meshes) {
-			// setup OpenGL data 
-			glGenVertexArrays(1, &m_glInfo[shapeIndex].m_VAO);
-			glGenBuffers(1, &m_glInfo[shapeIndex].m_VBO);
-			glBindVertexArray(m_glInfo[shapeIndex].m_VAO);
-			m_glInfo[shapeIndex].m_faceCount = shape.mesh.num_face_vertices.size();
-			// collect triangle vertices 
-			std::vector<OBJVertex> vertices;
-			int index = 0;
-			for (auto face : shape.mesh.num_face_vertices) {
-				for (int i = 0; i < 3; ++i) {
-					tinyobj::index_t idx = shape.mesh.indices[index + i]; OBJVertex v = { 0 };
-					// positions
-					v.x = attribs.vertices[3 * idx.vertex_index + 0];
-					v.y = attribs.vertices[3 * idx.vertex_index + 1];
-					v.z = attribs.vertices[3 * idx.vertex_index + 2];
-					// normals
-					if (attribs.normals.size() > 0) {
-						v.nx = attribs.normals[3 * idx.normal_index + 0];
-						v.ny = attribs.normals[3 * idx.normal_index + 1];
-						v.nz = attribs.normals[3 * idx.normal_index + 2];
-					}
-					// texture coordinates 
-					if (attribs.texcoords.size() > 0) {
-						v.u = attribs.texcoords[2 * idx.texcoord_index + 0];
-						v.v = attribs.texcoords[2 * idx.texcoord_index + 1];
-					} vertices.push_back(v);
-				}
-				index += face;
-			} // bind vertex data 
-			glBindBuffer(GL_ARRAY_BUFFER, m_glInfo[shapeIndex].m_VBO);
-			glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(OBJVertex), vertices.data(), GL_STATIC_DRAW);
-			glEnableVertexAttribArray(0);
-			glEnableVertexAttribArray(1);
-			glEnableVertexAttribArray(2);
-			//position
-			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(OBJVertex), 0);
-			//normal data 
-			glVertexAttribPointer(1, 3, GL_FLOAT, GL_TRUE, sizeof(OBJVertex), (void*)12);
-			//texture data 
-			glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(OBJVertex), (void*)24); 
-			glBindVertexArray(0);
-			glBindBuffer(GL_ARRAY_BUFFER, 0); 
-			shapeIndex++;
-		}
-	}
-	return ret;
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, buf.getTex());
+
+	pvw = glGetUniformLocation(shaderID, "screen");
+	glUniform1i(pvw, 1);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, buf.getDep());
+	
+	pvw = glGetUniformLocation(shaderID, "depthBuffer");
+	glUniform1i(pvw, 0);
+
+
+	glBindVertexArray(m_glInfo[0].m_VAO);
+	glDrawArrays(GL_TRIANGLES, 0, 6);
 }
 
 bool Model::loadFromFBX(const char * filename)
@@ -199,6 +155,31 @@ bool Model::loadFromFBX(const char * filename)
 	}
 
 	return ret;
+
+}
+
+void Model::generateScreenSpaceQuad()
+{
+	m_glInfo.push_back(OpenGLInfo());
+	glm::vec2 halfTexel = 1.0f / glm::vec2(1280, 720) * 0.5f;
+	float vertexData[] =	{ -1, -1, 0, 1, halfTexel.x, halfTexel.y,
+							1, 1, 0, 1, 1 - halfTexel.x, 1 - halfTexel.y,
+							-1, 1, 0, 1, halfTexel.x, 1 - halfTexel.y,
+
+							-1, -1, 0, 1, halfTexel.x, halfTexel.y,
+							1, -1, 0, 1, 1 - halfTexel.x, halfTexel.y,
+							1, 1, 0, 1, 1 - halfTexel.x, 1 - halfTexel.y, };
+	glGenVertexArrays(1, &m_glInfo[0].m_VAO);
+	glBindVertexArray(m_glInfo[0].m_VAO);
+	glGenBuffers(1, &m_glInfo[0].m_VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, m_glInfo[0].m_VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 6 * 6, vertexData, GL_STATIC_DRAW);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(float) * 6, 0);
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 6, ((char*)0) + 16);
+	glBindVertexArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 }
 

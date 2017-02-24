@@ -27,6 +27,7 @@ protected:
 	glm::mat4	m_projectionMatrix;
 	Shader*		m_mainShader;
 	Model*		m_testModel;
+	Model*		m_ppModel;
 	FrameBuffer m_fb;
 	Scene		m_scene;
 	float m_lMX, m_lMY, m_FOV, m_LSCRL;

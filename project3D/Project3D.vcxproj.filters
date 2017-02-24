@@ -73,5 +73,11 @@
     <Text Include="BasicFragShaderPlanarMap.txt">
       <Filter>Shaders</Filter>
     </Text>
+    <Text Include="PostProcessVert.txt">
+      <Filter>Shaders</Filter>
+    </Text>
+    <Text Include="DepthFogFrag.txt">
+      <Filter>Shaders</Filter>
+    </Text>
   </ItemGroup>
 </Project>
