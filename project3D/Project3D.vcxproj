@@ -93,6 +93,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Application3D.cpp" />
+    <ClCompile Include="FlowField.cpp" />
     <ClCompile Include="FrameBuffer.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Model.cpp" />
@@ -102,6 +103,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application3D.h" />
+    <ClInclude Include="FlowField.h" />
     <ClInclude Include="FrameBuffer.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="ParticleSystem.h" />
