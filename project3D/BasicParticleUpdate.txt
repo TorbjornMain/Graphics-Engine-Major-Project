@@ -9,7 +9,7 @@ out vec3 position;
 out vec3 velocity; 
 out float lifetime; 
 out float lifespan;
- 
+
 uniform float time; 
 uniform float deltaTime; 
 uniform float lifeMin; 

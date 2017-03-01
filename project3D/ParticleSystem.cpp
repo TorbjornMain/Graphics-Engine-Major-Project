@@ -47,9 +47,9 @@ void ParticleSystem::init(uint maxParticles, float lifespanMin, float lifespanMa
 	loc = glGetUniformLocation(m_drawShader, "sizeEnd");
 	glUniform1f(loc, m_endSize);
 	loc = glGetUniformLocation(m_drawShader, "colorStart");
-	glUniform4fv(0, 1, &m_startColor[0]);
+	glUniform4fv(loc, 1, &m_startColor[0]);
 	loc = glGetUniformLocation(m_drawShader, "colorEnd");
-	glUniform4fv(0, 1, &m_endColor[0]);
+	glUniform4fv(loc, 1, &m_endColor[0]);
 
 	glUseProgram(m_updateShader);
 
@@ -68,7 +68,7 @@ void ParticleSystem::draw(float time, const glm::mat4 & camTransform, const glm:
 
 	float deltaTime = time - m_lastDrawTime; m_lastDrawTime = time;
 
-	loc = glGetUniformLocation(m_updateShader, "time");
+	loc = glGetUniformLocation(m_updateShader, "deltaTime");
 	glUniform1f(loc, deltaTime);
 
 	loc = glGetUniformLocation(m_updateShader, "emitterPosition");
