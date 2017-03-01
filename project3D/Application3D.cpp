@@ -63,6 +63,16 @@ bool Application3D::startup() {
 	m_ppModel = new Model();
 	m_ppModel->generateScreenSpaceQuad();
 
+	Shader pShader = Shader();
+	Shader puShader = Shader();
+	pShader.CompileShaders("C:/Users/s171558/Documents/Graphics-Engine-Major-Project/project3D/BasicParticleVert.txt", "C:/Users/s171558/Documents/Graphics-Engine-Major-Project/project3D/BasicParticleFrag.txt", "C:/Users/s171558/Documents/Graphics-Engine-Major-Project/project3D/BasicParticleBillboardGeom.txt");
+	const char* varyings[] = { "position", "velocity", "lifetime", "lifespan" };
+	puShader.CompileUpdateShader("C:/Users/s171558/Documents/Graphics-Engine-Major-Project/project3D/BasicParticleUpdate.txt", varyings, 4);
+
+
+	m_scene.AddParticleSystem("GreenerFlare", glm::vec3(0, 0, 0), puShader.GetID(), pShader.GetID());
+
+
 	return true;
 }
 

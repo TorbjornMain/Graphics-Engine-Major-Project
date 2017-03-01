@@ -22,6 +22,10 @@ void Scene::drawToRenderTarget(const Camera & renderCam, FrameBuffer buf, float 
 	{
 		iter->second.draw(renderCam.m_projection * renderCam.m_view, glm::column(renderCam.m_transform, 3), time, time);
 	}
+	for (auto iter = m_particleSystems.begin(); iter != m_particleSystems.end(); iter++)
+	{
+		iter->second.draw(time, renderCam.m_transform, renderCam.m_projection * renderCam.m_view);
+	}
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glViewport(0, 0, 1280, 720);
 }
@@ -32,9 +36,13 @@ void Scene::draw(float time)
 	{
 		iter->second.draw(m_camera.m_projection * m_camera.m_view, glm::column(m_camera.m_transform, 3), time, time);
 	}
+	for (auto iter = m_particleSystems.begin(); iter != m_particleSystems.end(); iter++)
+	{
+		iter->second.draw(time, m_camera.m_transform, m_camera.m_projection * m_camera.m_view);
+	}
 }
 
-void Scene::AddInstance(char* name, Model * model, unsigned int shader, unsigned int texture, glm::mat4 transform)
+void Scene::AddInstance(char* name, Model * model, uint shader, uint texture, glm::mat4 transform)
 {
 	Instance ins = Instance();
 	ins.setModel(model);
@@ -44,7 +52,7 @@ void Scene::AddInstance(char* name, Model * model, unsigned int shader, unsigned
 	m_instances.insert(std::pair<char*, Instance>(name, ins));
 }
 
-void Scene::AddInstance(char * name, Model * model, unsigned int shader, const char * textureFile, glm::mat4 transform)
+void Scene::AddInstance(char * name, Model * model, uint shader, const char * textureFile, glm::mat4 transform)
 {
 	Instance ins = Instance();
 	ins.setModel(model);
@@ -52,6 +60,19 @@ void Scene::AddInstance(char * name, Model * model, unsigned int shader, const c
 	ins.loadTex(textureFile);
 	ins.setTransform(transform);
 	m_instances.insert(std::pair<char*, Instance>(name, ins));
+}
+
+void Scene::AddParticleSystem(char * name, glm::vec3 position, uint upShader, uint dShader)
+{
+	ParticleSystem p = ParticleSystem();
+	p.init(100000, 0.1f, 5.0f, 5, 20, 1, 0.1f, glm::vec4(0, 1, 0, 1), glm::vec4(0, 1, 1, 0.1f), upShader, dShader);
+	p.setPos(position);
+	m_particleSystems.insert(std::pair<char*, ParticleSystem>(name, p));
+}
+
+ParticleSystem & Scene::GetParticleSystem(char * name)
+{
+	return m_particleSystems[name];
 }
 
 Instance & Scene::GetInstance(char * name)

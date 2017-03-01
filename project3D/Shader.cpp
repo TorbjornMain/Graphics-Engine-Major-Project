@@ -13,16 +13,23 @@ Shader::~Shader()
 {
 }
 
-void Shader::CompileShaders(const char * vert, const char * frag)
+void Shader::CompileShaders(const char * vert, const char * frag, const char* geom)
 {
 	int success = GL_FALSE;
-	unsigned int vertShader = glCreateShader(GL_VERTEX_SHADER);
-	unsigned int fragShader = glCreateShader(GL_FRAGMENT_SHADER);
+	uint vertShader = glCreateShader(GL_VERTEX_SHADER);
+	uint fragShader = glCreateShader(GL_FRAGMENT_SHADER);
+	uint geomShader;
 	loadAndCompileShader(vertShader, vert);
 	loadAndCompileShader(fragShader, frag);
 	m_id = glCreateProgram();
 	glAttachShader(m_id, vertShader);
 	glAttachShader(m_id, fragShader);
+	if (geom != nullptr)
+	{
+		geomShader = glCreateShader(GL_GEOMETRY_SHADER);
+		loadAndCompileShader(geomShader, geom);
+		glAttachShader(m_id, geomShader);
+	}
 	glLinkProgram(m_id);
 
 	glGetProgramiv(m_id, GL_LINK_STATUS, &success);
@@ -41,9 +48,36 @@ void Shader::CompileShaders(const char * vert, const char * frag)
 
 	glDeleteShader(fragShader);
 	glDeleteShader(vertShader);
+	if (geom != nullptr) glDeleteShader(geomShader);
 }
 
-void Shader::loadAndCompileShader(unsigned int shaderID, const char * filename)
+void Shader::CompileUpdateShader(const char * vert, const char ** varyings, uint numVaryings)
+{
+	int success = GL_FALSE;
+	uint vs = glCreateShader(GL_VERTEX_SHADER);
+	loadAndCompileShader(vs, vert);
+	m_id = glCreateProgram();
+	glAttachShader(m_id, vs);
+	glTransformFeedbackVaryings(m_id, 4, varyings, GL_INTERLEAVED_ATTRIBS);
+	glLinkProgram(m_id);
+	
+	glGetProgramiv(m_id, GL_LINK_STATUS, &success);
+	if (success == GL_FALSE)
+	{
+		int infoLogLength = 0;
+		glGetProgramiv(m_id, GL_INFO_LOG_LENGTH, &infoLogLength);
+		char* infoLog = new char[infoLogLength];
+
+		glGetProgramInfoLog(m_id, infoLogLength, 0, infoLog);
+		std::cout << "RIP, Linking failed" << std::endl;
+		std::cout << infoLog;
+
+		delete[] infoLog;
+	}
+	glDeleteShader(vs);
+}
+
+void Shader::loadAndCompileShader(uint shaderID, const char * filename)
 {
 	std::ifstream file(filename);
 	std::string str;

@@ -5,7 +5,7 @@
 
 
 
-FrameBuffer::FrameBuffer(unsigned int w, unsigned int h)
+FrameBuffer::FrameBuffer(uint w, uint h)
 {
 	m_w = w; m_h = h;
 	m_buf = 0;

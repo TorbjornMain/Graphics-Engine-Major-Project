@@ -33,18 +33,18 @@ void Model::update(float time)
 		FBXSkeleton* skeleton = m_model->getSkeletonByIndex(0);
 		skeleton->evaluate(m_model->getAnimationByIndex(0), time);
 
-		for (unsigned int bone_index = 0; bone_index < skeleton->m_boneCount; ++bone_index)
+		for (uint bone_index = 0; bone_index < skeleton->m_boneCount; ++bone_index)
 		{
 			skeleton->m_nodes[bone_index]->updateGlobalTransform();
 		}
 	}
 }
 
-void Model::draw(unsigned int shaderID, glm::mat4 camera, glm::vec4 camPos, float time, unsigned int textureID, glm::mat4 transform)
+void Model::draw(uint shaderID, glm::mat4 camera, glm::vec4 camPos, float time, uint textureID, glm::mat4 transform)
 {
 	glUseProgram(shaderID);
 
-	unsigned int pvw = glGetUniformLocation(shaderID, "PVW");
+	uint pvw = glGetUniformLocation(shaderID, "PVW");
 	glUniformMatrix4fv(pvw, 1, false, glm::value_ptr(camera * transform));
 	pvw = glGetUniformLocation(shaderID, "lightDir");
 	glUniform3fv(pvw, 1, glm::value_ptr(glm::vec3(0, 1, 1)));
@@ -83,11 +83,11 @@ void Model::draw(unsigned int shaderID, glm::mat4 camera, glm::vec4 camPos, floa
 	}
 }
 
-void Model::drawPostProcessQuad(unsigned int shaderID, FrameBuffer buf)
+void Model::drawPostProcessQuad(uint shaderID, FrameBuffer buf)
 {
 	glUseProgram(shaderID);
 
-	unsigned int pvw;
+	uint pvw;
 
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, buf.getTex());
@@ -129,7 +129,7 @@ bool Model::loadFromFBX(const char * filename)
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_glInfo[i].m_IBO);
 
 			glBufferData(GL_ARRAY_BUFFER, mesh->m_vertices.size() * sizeof(FBXVertex), mesh->m_vertices.data(), GL_STATIC_DRAW);
-			glBufferData(GL_ELEMENT_ARRAY_BUFFER, mesh->m_indices.size() * sizeof(unsigned int), mesh->m_indices.data(), GL_STATIC_DRAW);
+			glBufferData(GL_ELEMENT_ARRAY_BUFFER, mesh->m_indices.size() * sizeof(uint), mesh->m_indices.data(), GL_STATIC_DRAW);
 
 			glEnableVertexAttribArray(0);
 			glEnableVertexAttribArray(1);
@@ -150,7 +150,7 @@ bool Model::loadFromFBX(const char * filename)
 			glBindVertexArray(0);
 			glBindBuffer(GL_ARRAY_BUFFER, 0);
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-			m_glInfo[i].m_faceCount = (unsigned int)mesh->m_indices.size()/3;
+			m_glInfo[i].m_faceCount = (uint)mesh->m_indices.size()/3;
 		}
 	}
 

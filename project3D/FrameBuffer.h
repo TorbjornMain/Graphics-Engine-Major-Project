@@ -1,11 +1,12 @@
 #pragma once
+#include "typedefs.h"
 class FrameBuffer
 {
 public:
 	void GenBuffer();
 	FrameBuffer() {
 		m_w = m_h = 512;  m_buf = 0; m_tex = 0; m_dep = 0; }
-	FrameBuffer(unsigned int w, unsigned int h);
+	FrameBuffer(uint w, uint h);
 	~FrameBuffer();
 
 
@@ -15,10 +16,10 @@ public:
 	int getW() { return m_w; }
 	int getH() { return m_h; }
 private:
-	unsigned int m_buf;
-	unsigned int m_tex;
-	unsigned int m_dep;
+	uint m_buf;
+	uint m_tex;
+	uint m_dep;
 
-	unsigned int m_w, m_h;
+	uint m_w, m_h;
 };
 

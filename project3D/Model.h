@@ -3,12 +3,13 @@
 #include <glm\ext.hpp>
 #include <FBXFile.h>
 #include "FrameBuffer.h"
+#include "typedefs.h"
 
 struct OpenGLInfo { 
-	unsigned int m_VAO; 
-	unsigned int m_VBO; 
-	unsigned int m_IBO = -1;
-	unsigned int m_faceCount;
+	uint m_VAO; 
+	uint m_VBO; 
+	uint m_IBO = -1;
+	uint m_faceCount;
 };
 
 struct OBJVertex { 
@@ -26,8 +27,8 @@ public:
 
 
 	void update(float time);
-	void draw(unsigned int shaderID, glm::mat4 camera, glm::vec4 camPos, float time, unsigned int textureID, glm::mat4 transform);
-	void drawPostProcessQuad(unsigned int shaderID, FrameBuffer buf);
+	void draw(uint shaderID, glm::mat4 camera, glm::vec4 camPos, float time, uint textureID, glm::mat4 transform);
+	void drawPostProcessQuad(uint shaderID, FrameBuffer buf);
 
 	bool loadFromFBX(const char* filename);
 	void generateScreenSpaceQuad();
@@ -50,11 +51,11 @@ public:
 	void setTransform(glm::mat4 trans) { m_transform = trans; }
 	glm::mat4 getTransform() { return m_transform; }
 
-	unsigned int getTexture() { return m_texture; }
-	void setTexture(unsigned int tex) { m_texture = tex; }
+	uint getTexture() { return m_texture; }
+	void setTexture(uint tex) { m_texture = tex; }
 
-	unsigned int getShader() { return m_shader; }
-	void setShader(unsigned int shad) { m_shader = shad; }
+	uint getShader() { return m_shader; }
+	void setShader(uint shad) { m_shader = shad; }
 
 	Model* getModel() { return m_model; }
 	void setModel(Model* model) { m_model = model; }
@@ -64,8 +65,8 @@ public:
 	void draw(glm::mat4 camera, glm::vec4 camPos, float time, float animTime);
 private:
 	glm::mat4 m_transform;
-	unsigned int m_texture;
-	unsigned int m_shader;
+	uint m_texture;
+	uint m_shader;
 	Model* m_model;
 
 };
