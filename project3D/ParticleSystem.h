@@ -13,18 +13,41 @@ struct Particle
 	float lifespan;
 };
 
+
+struct ParticleSystemData
+{
+	uint maxParticles;
+	float lifespanMin;
+	float lifespanMax;
+	float velocityMin;
+	float velocityMax;
+	float startSize;
+	float endSize;
+
+	uint flowField;
+	float fieldScale;
+
+	glm::vec4 startColor;
+	glm::vec4 endColor;
+};
+
 class ParticleSystem
 {
 public:
 	ParticleSystem();
 	~ParticleSystem();
 
-	void init(uint maxParticles, float lifespanMin, float lifespanMax, float velocityMin, float velocityMax, float startSize, float endSize, const glm::vec4& startColor, const glm::vec4& endColor, uint upShader, uint drawShader);
+	void init(uint maxParticles, float lifespanMin, float lifespanMax, float velocityMin, float velocityMax, float startSize, float endSize, const glm::vec4& startColor, const glm::vec4& endColor, uint upShader, uint drawShader, uint flowField = -1, uint fieldScale = 0);
+
+	void initializeUniforms();
+
 
 	void draw(float time, const glm::mat4& camTransform, const glm::mat4& projectionView);
 
 	glm::vec3 getPos() { return m_position; }
 	void setPos(glm::vec3 newPos) { m_position = newPos; }
+
+	ParticleSystemData& getData() { return m_data; }
 
 private:
 	void genBuffers();
@@ -36,19 +59,10 @@ private:
 	uint m_drawShader;
 
 	Particle* m_particles;
-	uint m_maxParticles;
 
 	glm::vec3 m_position;
 
-	float m_lifespanMin;
-	float m_lifespanMax;
-	float m_velocityMin;
-	float m_velocityMax;
-	float m_startSize;
-	float m_endSize;
-
-	glm::vec4 m_startColor;
-	glm::vec4 m_endColor;
+	ParticleSystemData m_data;
 
 	float m_lastDrawTime;
 

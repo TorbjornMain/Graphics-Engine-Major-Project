@@ -18,7 +18,8 @@ public:
 	glm::vec3 getShape() { return m_shape; }
 
 private:
-	
+	glm::vec3 squish(glm::vec3 x);
+
 	glm::vec3 m_shape;
 
 	glm::vec3* m_storage;

@@ -16,6 +16,7 @@ void FlowField::init(glm::vec3 shape, VectorFieldGeneratorFunc vfg)
 	m_shape = shape;
 
 	m_storage = new glm::vec3[shape.x * shape.y * shape.z];
+	float* floatStorage = new float[shape.x * shape.y * shape.z * 3];
 
 	for (int x = 0; x < shape.x; x++)
 	{
@@ -23,20 +24,32 @@ void FlowField::init(glm::vec3 shape, VectorFieldGeneratorFunc vfg)
 		{
 			for (int z = 0; z < shape.z; z++)
 			{
-				m_storage[x + ((int)shape.x * (y + (z * (int)(shape.y))))] = vfg(glm::vec3(x,y,z));
+				glm::vec3 v = ((2*(glm::vec3(x, y, z) / shape)) - 1.f);
+				m_storage[x + ((int)shape.x * (y + (z * (int)(shape.y))))] = squish(vfg(v));
+				floatStorage[(3 * x) + ((int)shape.x * (y + (z * (int)(shape.y))))] = m_storage[x + ((int)shape.x * (y + (z * (int)(shape.y))))].x;
+				floatStorage[1+(3 * x) + ((int)shape.x * (y + (z * (int)(shape.y))))] = m_storage[x + ((int)shape.x * (y + (z * (int)(shape.y))))].y;
+				floatStorage[2+(3 * x) + ((int)shape.x * (y + (z * (int)(shape.y))))] = m_storage[x + ((int)shape.x * (y + (z * (int)(shape.y))))].z;
 			}
 		}
 	}
+
+	
 
 	glGenTextures(1, &m_id);
 	glBindTexture(GL_TEXTURE_3D, m_id);
 	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_BORDER);
 	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
 	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-	float color[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+	float color[] = { 0.5f, 0.5f, 0.5f, 1.0f };
 	glTexParameterfv(GL_TEXTURE_3D, GL_TEXTURE_BORDER_COLOR, color);
 	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexImage3D(GL_TEXTURE_3D, 0, GL_RGB, (int)shape.x, (int)shape.y, (int)shape.z, 0, GL_RGB, GL_FLOAT, (float*)m_storage);
+	glTexImage3D(GL_TEXTURE_3D, 0, GL_RGB, (int)shape.x, (int)shape.y, (int)shape.z, 0, GL_RGB, GL_FLOAT, m_storage);
 	glBindTexture(GL_TEXTURE_3D, 0);
+	delete[] floatStorage;
+}
+
+glm::vec3 FlowField::squish(glm::vec3 x)
+{
+	return (x + glm::vec3(10, 10, 10))/20;
 }

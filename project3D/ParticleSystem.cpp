@@ -2,8 +2,13 @@
 #include <gl_core_4_4.h>
 
 
-ParticleSystem::ParticleSystem() : m_particles(nullptr), m_maxParticles(0), m_position(0, 0, 0), m_drawShader(0), m_updateShader(0), m_lastDrawTime(0)
+ParticleSystem::ParticleSystem() : m_particles(nullptr)
 {
+	m_data = ParticleSystemData();
+	m_data.maxParticles = 0;
+	m_position = glm::vec3(0, 0, 0);
+	m_data.startColor = glm::vec4(0, 0, 0, 0);
+	m_data.endColor = glm::vec4(0, 0, 0, 0);
 	m_vao[0] = 0;
 	m_vao[1] = 0;
 	m_vbo[0] = 0;
@@ -15,21 +20,24 @@ ParticleSystem::~ParticleSystem()
 {
 }
 
-void ParticleSystem::init(uint maxParticles, float lifespanMin, float lifespanMax, float velocityMin, float velocityMax, float startSize, float endSize, const glm::vec4 & startColor, const glm::vec4 & endColor, uint upShader, uint drawShader)
+void ParticleSystem::init(uint maxParticles, float lifespanMin, float lifespanMax, float velocityMin, float velocityMax, float startSize, float endSize, const glm::vec4 & startColor, const glm::vec4 & endColor, uint upShader, uint drawShader, uint flowField, uint fieldScale)
 {
-	m_startColor = startColor;
-	m_endColor = endColor;
+	m_data.startColor = startColor;
+	m_data.endColor = endColor;
 
-	m_startSize = startSize;
-	m_endSize = endSize;
+	m_data.startSize = startSize;
+	m_data.endSize = endSize;
 
-	m_velocityMin = velocityMin;
-	m_velocityMax = velocityMax;
+	m_data.velocityMin = velocityMin;
+	m_data.velocityMax = velocityMax;
 	
-	m_lifespanMin = lifespanMin;
-	m_lifespanMax = lifespanMax;
+	m_data.lifespanMin = lifespanMin;
+	m_data.lifespanMax = lifespanMax;
 
-	m_maxParticles = maxParticles;
+	m_data.maxParticles = maxParticles;
+	
+	m_data.flowField = flowField;
+	m_data.fieldScale = fieldScale;
 
 	m_particles = new Particle[maxParticles];
 
@@ -40,31 +48,49 @@ void ParticleSystem::init(uint maxParticles, float lifespanMin, float lifespanMa
 
 	genBuffers();
 
+	initializeUniforms();
+
+}
+
+void ParticleSystem::initializeUniforms()
+{
 	glUseProgram(m_drawShader);
 
 	int loc = glGetUniformLocation(m_drawShader, "sizeStart");
-	glUniform1f(loc, m_startSize);
+	glUniform1f(loc, m_data.startSize);
 	loc = glGetUniformLocation(m_drawShader, "sizeEnd");
-	glUniform1f(loc, m_endSize);
+	glUniform1f(loc, m_data.endSize);
 	loc = glGetUniformLocation(m_drawShader, "colorStart");
-	glUniform4fv(loc, 1, &m_startColor[0]);
+	glUniform4fv(loc, 1, &m_data.startColor[0]);
 	loc = glGetUniformLocation(m_drawShader, "colorEnd");
-	glUniform4fv(loc, 1, &m_endColor[0]);
+	glUniform4fv(loc, 1, &m_data.endColor[0]);
 
 	glUseProgram(m_updateShader);
 
 	loc = glGetUniformLocation(m_updateShader, "lifeMin");
-	glUniform1f(loc, m_lifespanMin);
+	glUniform1f(loc, m_data.lifespanMin);
 	loc = glGetUniformLocation(m_updateShader, "lifeMax");
-	glUniform1f(loc, m_lifespanMax);
+	glUniform1f(loc, m_data.lifespanMax);
+	loc = glGetUniformLocation(m_updateShader, "fieldScale");
+	glUniform1f(loc, m_data.fieldScale);
+	loc = glGetUniformLocation(m_updateShader, "velMax");
+	glUniform1f(loc, m_data.velocityMax);
+	loc = glGetUniformLocation(m_updateShader, "velMin");
+	glUniform1f(loc, m_data.velocityMin);
 }
 
 void ParticleSystem::draw(float time, const glm::mat4 & camTransform, const glm::mat4 & projectionView)
 {
 	glUseProgram(m_updateShader);
 
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_3D, m_data.flowField);
+
 	int loc = glGetUniformLocation(m_updateShader, "time");
 	glUniform1f(loc, time);
+
+	loc = glGetUniformLocation(m_updateShader, "flowField");
+	glUniform1i(loc, 0);
 
 	float deltaTime = time - m_lastDrawTime; m_lastDrawTime = time;
 
@@ -82,7 +108,7 @@ void ParticleSystem::draw(float time, const glm::mat4 & camTransform, const glm:
 	glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, m_vbo[otherBuf]);
 	glBeginTransformFeedback(GL_POINTS);
 
-	glDrawArrays(GL_POINTS, 0, m_maxParticles);
+	glDrawArrays(GL_POINTS, 0, m_data.maxParticles);
 
 	glEndTransformFeedback();
 	glDisable(GL_RASTERIZER_DISCARD);
@@ -95,7 +121,7 @@ void ParticleSystem::draw(float time, const glm::mat4 & camTransform, const glm:
 	glUniformMatrix4fv(loc, 1, false, &camTransform[0][0]);
 
 	glBindVertexArray(m_vao[otherBuf]);
-	glDrawArrays(GL_POINTS, 0, m_maxParticles);
+	glDrawArrays(GL_POINTS, 0, m_data.maxParticles);
 
 	m_activeBuffer = otherBuf;
 }
@@ -108,7 +134,7 @@ void ParticleSystem::genBuffers()
 
 	glBindVertexArray(m_vao[0]);
 	glBindBuffer(GL_ARRAY_BUFFER, m_vbo[0]);
-	glBufferData(GL_ARRAY_BUFFER, m_maxParticles * sizeof(Particle), m_particles, GL_STREAM_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, m_data.maxParticles * sizeof(Particle), m_particles, GL_STREAM_DRAW);
 	
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
@@ -121,7 +147,7 @@ void ParticleSystem::genBuffers()
 	
 	glBindVertexArray(m_vao[1]);
 	glBindBuffer(GL_ARRAY_BUFFER, m_vbo[1]);
-	glBufferData(GL_ARRAY_BUFFER, m_maxParticles * sizeof(Particle), 0, GL_STREAM_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, m_data.maxParticles * sizeof(Particle), 0, GL_STREAM_DRAW);
 
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);

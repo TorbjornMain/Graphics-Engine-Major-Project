@@ -13,8 +13,12 @@ out float lifespan;
 uniform float time; 
 uniform float deltaTime; 
 uniform float lifeMin; 
-uniform float lifeMax; 
-uniform vec3 emitterPosition; 
+uniform float lifeMax;
+uniform float velMin;
+uniform float velMax;
+uniform vec3 emitterPosition;
+uniform sampler3D flowField;
+uniform float fieldScale;
 
 const float INVERSE_MAX_UINT = 1.0f / 4294967295.0f; 
 
@@ -27,10 +31,17 @@ float rand(uint seed, float range)
 	return float(range * i) * INVERSE_MAX_UINT;
 }
 
+vec3 unsquish(vec3 x)
+{
+	return (x * 20) - vec3(10, 10, 10);
+}
+
 void main() 
 { 
-	position = Position + Velocity * deltaTime; 
-	velocity = Velocity; lifetime = Lifetime + deltaTime; 
+	vec3 P = position = Position + Velocity * deltaTime;
+	vec3 flowVel = unsquish(texture(flowField, ((P - emitterPosition)/(2*fieldScale)) + 0.5).xyz);
+	velocity = Velocity + flowVel * deltaTime;
+	lifetime = Lifetime + deltaTime; 
 	lifespan = Lifespan; 
 	// emit a new particle as soon as it dies 
 	if (lifetime > lifespan) 
@@ -40,6 +51,7 @@ void main()
 		velocity.y = rand(seed++, 2) - 1; 
 		velocity.z = rand(seed++, 2) - 1; 
 		velocity = normalize(velocity);
+		velocity *= velMin + ((rand(seed++, 2) - 1) * (velMax - velMin));
 		position = emitterPosition; 
 		lifetime = 0; 
 		lifespan = rand(seed++, lifeMax - lifeMin) + lifeMin; 
