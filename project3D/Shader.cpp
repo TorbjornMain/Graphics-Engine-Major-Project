@@ -58,8 +58,7 @@ void Shader::CompileUpdateShader(const char * vert, const char ** varyings, uint
 	loadAndCompileShader(vs, vert);
 	m_id = glCreateProgram();
 	glAttachShader(m_id, vs);
-	const char* nvaryings[] = { "position", "velocity", "lifetime", "lifespan" };
-	glTransformFeedbackVaryings(m_id, 4, nvaryings, GL_INTERLEAVED_ATTRIBS);
+	glTransformFeedbackVaryings(m_id, numVaryings, varyings, GL_INTERLEAVED_ATTRIBS);
 	glLinkProgram(m_id);
 	
 	glGetProgramiv(m_id, GL_LINK_STATUS, &success);

@@ -44,40 +44,42 @@ bool Application3D::startup() {
 	m_fb.GenBuffer();
 
 	m_mainShader = new Shader();
-	m_mainShader->CompileShaders("C:/Users/s171558/Documents/Graphics-Engine-Major-Project/project3D/BasicVertShader.txt", "C:/Users/s171558/Documents/Graphics-Engine-Major-Project/project3D/PBRFragShader.txt");
+	m_mainShader->CompileShaders("C:/Users/Zac/Documents/Graphics-Engine-Major-Project/project3D/BasicVertShader.txt", "C:/Users/Zac/Documents/Graphics-Engine-Major-Project/project3D/PBRFragShader.txt");
 	m_testModel = new Model();
-	//m_testModel->loadFromOBJ("C:/Users/s171558/Documents/Graphics-Engine-Major-Project/Meshes/Bunny.obj");
-	m_testModel->loadFromFBX("C:/Users/s171558/Documents/Graphics-Engine-Major-Project/Meshes/mecanimloco.fbx");
-	m_scene.AddInstance("spicy boi", m_testModel, m_mainShader->GetID(), "C:/Users/s171558/Documents/Graphics-Engine-Major-Project/Textures/woodtex.jpg", glm::translate(glm::vec3((rand() / (float)INT16_MAX) - 0.5f, (rand() / (float)INT16_MAX) - 0.5f, (rand() / (float)INT16_MAX) - 0.5f) * 20) * glm::scale(glm::vec3(10.f)));
-	m_mainShader->CompileShaders("C:/Users/s171558/Documents/Graphics-Engine-Major-Project/project3D/BasicVertShader.txt", "C:/Users/s171558/Documents/Graphics-Engine-Major-Project/project3D/BasicFragShaderPlanarMap.txt");
-	m_scene.AddInstance("angry boi", m_testModel, m_mainShader->GetID(), "C:/Users/s171558/Documents/Graphics-Engine-Major-Project/Textures/woodtex.jpg" , glm::translate(glm::vec3((rand() / (float)INT16_MAX) - 0.5f, (rand() / (float)INT16_MAX) - 0.5f, (rand() / (float)INT16_MAX) - 0.5f) * 20) * glm::scale(glm::vec3(10.f)));
+	//m_testModel->loadFromOBJ("C:/Users/Zac/Documents/Graphics-Engine-Major-Project/Meshes/Bunny.obj");
+	m_testModel->loadFromFBX("C:/Users/Zac/Documents/Graphics-Engine-Major-Project/Meshes/mecanimloco.fbx");
+	m_scene.AddInstance("spicy boi", m_testModel, m_mainShader->GetID(), "C:/Users/Zac/Documents/Graphics-Engine-Major-Project/Textures/woodtex.jpg", glm::translate(glm::vec3((rand() / (float)INT16_MAX) - 0.5f, (rand() / (float)INT16_MAX) - 0.5f, (rand() / (float)INT16_MAX) - 0.5f) * 20) * glm::scale(glm::vec3(10.f)));
+	m_mainShader->CompileShaders("C:/Users/Zac/Documents/Graphics-Engine-Major-Project/project3D/BasicVertShader.txt", "C:/Users/Zac/Documents/Graphics-Engine-Major-Project/project3D/BasicFragShaderPlanarMap.txt");
+	m_scene.AddInstance("angry boi", m_testModel, m_mainShader->GetID(), "C:/Users/Zac/Documents/Graphics-Engine-Major-Project/Textures/woodtex.jpg" , glm::translate(glm::vec3((rand() / (float)INT16_MAX) - 0.5f, (rand() / (float)INT16_MAX) - 0.5f, (rand() / (float)INT16_MAX) - 0.5f) * 20) * glm::scale(glm::vec3(10.f)));
 	
 	std::string st = "a";
 	for (int i = 0; i < 15; i++)
 	{
 		st = st + st;
-		m_scene.AddInstance(const_cast<char*>(st.c_str()), m_testModel, m_mainShader->GetID(), "C:/Users/s171558/Documents/Graphics-Engine-Major-Project/Textures/woodtex.jpg", glm::translate(glm::vec3((rand() / (float)INT16_MAX) - 0.5f, (rand() / (float)INT16_MAX) - 0.5f, (rand() / (float)INT16_MAX) - 0.5f) * 20) * glm::scale(glm::vec3(10.f)));
+		m_scene.AddInstance(const_cast<char*>(st.c_str()), m_testModel, m_mainShader->GetID(), "C:/Users/Zac/Documents/Graphics-Engine-Major-Project/Textures/woodtex.jpg", glm::translate(glm::vec3((rand() / (float)INT16_MAX) - 0.5f, (rand() / (float)INT16_MAX) - 0.5f, (rand() / (float)INT16_MAX) - 0.5f) * 20) * glm::scale(glm::vec3(10.f)));
 	}
-	m_mainShader->CompileShaders("C:/Users/s171558/Documents/Graphics-Engine-Major-Project/project3D/PostProcessVert.txt","C:/Users/s171558/Documents/Graphics-Engine-Major-Project/project3D/DepthFogFrag.txt");
+	m_mainShader->CompileShaders("C:/Users/Zac/Documents/Graphics-Engine-Major-Project/project3D/PostProcessVert.txt","C:/Users/Zac/Documents/Graphics-Engine-Major-Project/project3D/DepthFogFrag.txt");
 	m_ppModel = new Model();
 	m_ppModel->generateScreenSpaceQuad();
 
 	Shader pShader = Shader();
 	Shader puShader = Shader();
-	pShader.CompileShaders("C:/Users/s171558/Documents/Graphics-Engine-Major-Project/project3D/BasicParticleVert.txt", "C:/Users/s171558/Documents/Graphics-Engine-Major-Project/project3D/BasicParticleFrag.txt", "C:/Users/s171558/Documents/Graphics-Engine-Major-Project/project3D/BasicParticleBillboardGeom.txt");
+	pShader.CompileShaders("C:/Users/Zac/Documents/Graphics-Engine-Major-Project/project3D/BasicParticleVert.txt", "C:/Users/Zac/Documents/Graphics-Engine-Major-Project/project3D/BasicParticleFrag.txt", "C:/Users/Zac/Documents/Graphics-Engine-Major-Project/project3D/BasicParticleBillboardGeom.txt");
 	const char* varyings[] = { "position", "velocity", "lifetime", "lifespan" };
-	puShader.CompileUpdateShader("C:/Users/s171558/Documents/Graphics-Engine-Major-Project/project3D/BasicParticleUpdate.txt", varyings, 4);
+	puShader.CompileUpdateShader("C:/Users/Zac/Documents/Graphics-Engine-Major-Project/project3D/BasicParticleUpdate.txt", varyings, 4);
 
 	auto f = [](glm::vec3 x) {
-		glm::vec3 vec = vec3(x.z, 0.01f, -x.x) - x * 5.f;
+		glm::vec3 vec = vec3(x.z, 0.01f, -x.x) - x * 10.f;//vec3(2*(cos(x.y) - x.x), 0.01f,2*(sin(x.y) - x.z)); //vec3(x.z, 0.3f, -x.x) - x * 10.f;
 		return vec;
 	};
 	FlowField ff = FlowField();
-	ff.init(glm::vec3(16), f);
+	ff.init(glm::vec3(128), f);
 	
 	m_scene.AddParticleSystem("GreenerFlare", glm::vec3(0, 0, 0), puShader.GetID(), pShader.GetID());
 	m_scene.GetParticleSystem("GreenerFlare").getData().flowField = ff.getID();
-	m_scene.GetParticleSystem("GreenerFlare").getData().fieldScale = 10;
+	m_scene.GetParticleSystem("GreenerFlare").getData().fieldScale = 1;
+	m_scene.GetParticleSystem("GreenerFlare").getData().velocityMax = 0.01f;
+	m_scene.GetParticleSystem("GreenerFlare").getData().startColor = vec4(0, 1, 0, 0.9f);
 	m_scene.GetParticleSystem("GreenerFlare").initializeUniforms();
 
 
@@ -157,14 +159,14 @@ void Application3D::draw() {
 	c.m_transform = m_camTransform;
 	m_scene.setCamera(c);
 
-	//m_scene.drawToRenderTarget(c, m_fb, getTime());
+	m_scene.drawToRenderTarget(c, m_fb, getTime());
 
 	setBackgroundColour(0.25f, 0.25f, 0.25f);
 	// wipe the screen to the background colour
 	clearScreen();
 	
-	m_scene.draw(getTime());
-	Gizmos::draw(m_projectionMatrix * m_viewMatrix);
+	//m_scene.draw(getTime());
+	//Gizmos::draw(m_projectionMatrix * m_viewMatrix);
 
-	//m_ppModel->drawPostProcessQuad(m_mainShader->GetID(), m_fb);
+	m_ppModel->drawPostProcessQuad(m_mainShader->GetID(), m_fb);
 }
