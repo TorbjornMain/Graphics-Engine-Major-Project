@@ -1,0 +1,14 @@
+// FRAGMENT SHADER
+#version 410 
+in vec4 Colour; 
+in vec2 uvs;
+
+uniform sampler2D tex;
+
+
+out vec4 fragColour; 
+
+void main() 
+{ 
+	fragColour = Colour; 
+}

@@ -10,7 +10,7 @@ in float lifetime[];
 in float lifespan[]; 
 // output to fragment shader 
 out vec4 Colour; 
-
+out vec2 uvs;
 uniform mat4 projectionView; 
 uniform mat4 cameraTransform; 
 uniform float sizeStart; 
@@ -34,11 +34,15 @@ void main()
 	mat3 billboard = mat3(xAxis,yAxis,zAxis); 
 	// emit he 4 vertices for the quad 
 	gl_Position = projectionView*vec4(billboard*corners[0]+position[0], 1); 
+	uvs = vec2(1, 1);
 	EmitVertex(); 
 	gl_Position = projectionView*vec4(billboard*corners[1]+position[0], 1); 
+	uvs = vec2(1, 0);
 	EmitVertex(); 
 	gl_Position = projectionView*vec4(billboard*corners[2]+position[0], 1); 
+	uvs = vec2(0, 1);
 	EmitVertex(); 
 	gl_Position = projectionView*vec4(billboard*corners[3]+position[0], 1); 
+	uvs = vec2(0, 0);
 	EmitVertex(); 
 }

@@ -1,6 +1,6 @@
 #include "ParticleSystem.h"
 #include <gl_core_4_4.h>
-
+#include <Texture.h>
 
 ParticleSystem::ParticleSystem() : m_particles(nullptr)
 {
@@ -20,7 +20,7 @@ ParticleSystem::~ParticleSystem()
 {
 }
 
-void ParticleSystem::init(uint maxParticles, float lifespanMin, float lifespanMax, float velocityMin, float velocityMax, float startSize, float endSize, const glm::vec4 & startColor, const glm::vec4 & endColor, uint upShader, uint drawShader, uint flowField, uint fieldScale)
+void ParticleSystem::init(uint maxParticles, float lifespanMin, float lifespanMax, float velocityMin, float velocityMax, float startSize, float endSize, const glm::vec4 & startColor, const glm::vec4 & endColor, uint upShader, uint drawShader, uint flowField, uint fieldScale, uint texture)
 {
 	m_data.startColor = startColor;
 	m_data.endColor = endColor;
@@ -45,6 +45,8 @@ void ParticleSystem::init(uint maxParticles, float lifespanMin, float lifespanMa
 
 	m_updateShader = upShader;
 	m_drawShader = drawShader;
+
+	m_data.texture = texture;
 
 	genBuffers();
 
@@ -81,16 +83,22 @@ void ParticleSystem::initializeUniforms()
 
 void ParticleSystem::draw(float time, const glm::mat4 & camTransform, const glm::mat4 & projectionView)
 {
+	glDepthMask(false);
 	glUseProgram(m_updateShader);
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_3D, m_data.flowField);
+
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, m_data.texture);
 
 	int loc = glGetUniformLocation(m_updateShader, "time");
 	glUniform1f(loc, time);
 
 	loc = glGetUniformLocation(m_updateShader, "flowField");
 	glUniform1i(loc, 0);
+
+
 
 	float deltaTime = time - m_lastDrawTime; m_lastDrawTime = time;
 
@@ -120,10 +128,43 @@ void ParticleSystem::draw(float time, const glm::mat4 & camTransform, const glm:
 	loc = glGetUniformLocation(m_drawShader, "cameraTransform");
 	glUniformMatrix4fv(loc, 1, false, &camTransform[0][0]);
 
+	loc = glGetUniformLocation(m_drawShader, "tex");
+	glUniform1i(loc, 1);
+
+
 	glBindVertexArray(m_vao[otherBuf]);
 	glDrawArrays(GL_POINTS, 0, m_data.maxParticles);
 
 	m_activeBuffer = otherBuf;
+	glDepthMask(true);
+}
+
+void ParticleSystem::loadTexture(const char * filename)
+{
+	aie::Texture t;
+	t.load(filename);
+	glGenTextures(1, &(m_data.texture));
+	glBindTexture(GL_TEXTURE_2D, m_data.texture);
+	uint format = 0;
+	switch (t.getFormat())
+	{
+	case(aie::Texture::Format::RED):
+		format = GL_RED;
+		break;
+	case(aie::Texture::Format::RG):
+		format = GL_RG;
+		break;
+	case(aie::Texture::Format::RGB):
+		format = GL_RGB;
+		break;
+	case(aie::Texture::Format::RGBA):
+		format = GL_RGBA;
+		break;
+	}
+	glTexImage2D(GL_TEXTURE_2D, 0, format, t.getWidth(), t.getHeight(), 0, format, GL_UNSIGNED_BYTE, t.getPixels());
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 

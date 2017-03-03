@@ -11,11 +11,11 @@ Scene::~Scene()
 {
 }
 
-void Scene::drawToRenderTarget(const Camera & renderCam, FrameBuffer buf, float time)
+void Scene::drawToRenderTarget(const Camera & renderCam, FrameBuffer buf, float time, int screenWidth, int screenHeight)
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, buf.getBuf());
 	glViewport(0, 0, buf.getW(), buf.getH());
-	glClearColor(0.25f, 0.25f, 0.25f, 1);
+	glClearColor(0.f, 0.f, 0.f, 1);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	for (auto iter = m_instances.begin(); iter != m_instances.end(); iter++)
@@ -27,7 +27,7 @@ void Scene::drawToRenderTarget(const Camera & renderCam, FrameBuffer buf, float 
 		iter->second.draw(time, renderCam.m_transform, renderCam.m_projection * renderCam.m_view);
 	}
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glViewport(0, 0, 1280, 720);
+	glViewport(0, 0, screenWidth, screenHeight);
 }
 
 void Scene::draw(float time)
@@ -62,10 +62,10 @@ void Scene::AddInstance(char * name, Model * model, uint shader, const char * te
 	m_instances.insert(std::pair<char*, Instance>(name, ins));
 }
 
-void Scene::AddParticleSystem(char * name, glm::vec3 position, uint upShader, uint dShader)
+void Scene::AddParticleSystem(char * name, glm::vec3 position, uint upShader, uint dShader, uint numParticles)
 {
 	ParticleSystem p = ParticleSystem();
-	p.init(1500000, 20.f, 40.f, 0, 0.01f, 0.01f, 0.01f, glm::vec4(0, 0.5, 0, 1), glm::vec4(1, 1, 0, 0.1f), upShader, dShader);
+	p.init(numParticles, 20.f, 40.f, 0, 0.01f, 0.01f, 0.01f, glm::vec4(0, 0.5, 0, 1), glm::vec4(1, 1, 0, 0.1f), upShader, dShader);
 	p.setPos(position);
 	m_particleSystems.insert(std::pair<char*, ParticleSystem>(name, p));
 }

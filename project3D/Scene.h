@@ -20,11 +20,11 @@ public:
 	Scene();
 	~Scene();
 
-	void drawToRenderTarget(const Camera& renderCam, FrameBuffer buf, float time);
+	void drawToRenderTarget(const Camera& renderCam, FrameBuffer buf, float time, int screenWidth, int screenHeight);
 	void draw(float time);
 	void AddInstance(char* name, Model* model, uint shader, uint texture, glm::mat4 transform);
 	void AddInstance(char* name, Model* model, uint shader, const char* textureFile, glm::mat4 transform);
-	void AddParticleSystem(char* name, glm::vec3 position, uint upShader, uint dShader);
+	void AddParticleSystem(char* name, glm::vec3 position, uint upShader, uint dShader, uint numParticles = 100000);
 	ParticleSystem& GetParticleSystem(char* name);
 	Instance& GetInstance(char* name);
 	Camera getCamera() { return m_camera; }

@@ -24,6 +24,8 @@ struct ParticleSystemData
 	float startSize;
 	float endSize;
 
+	uint texture;
+
 	uint flowField;
 	float fieldScale;
 
@@ -37,7 +39,7 @@ public:
 	ParticleSystem();
 	~ParticleSystem();
 
-	void init(uint maxParticles, float lifespanMin, float lifespanMax, float velocityMin, float velocityMax, float startSize, float endSize, const glm::vec4& startColor, const glm::vec4& endColor, uint upShader, uint drawShader, uint flowField = -1, uint fieldScale = 0);
+	void init(uint maxParticles, float lifespanMin, float lifespanMax, float velocityMin, float velocityMax, float startSize, float endSize, const glm::vec4& startColor, const glm::vec4& endColor, uint upShader, uint drawShader, uint flowField = -1, uint fieldScale = 0, uint texture = 0);
 
 	void initializeUniforms();
 
@@ -46,6 +48,8 @@ public:
 
 	glm::vec3 getPos() { return m_position; }
 	void setPos(glm::vec3 newPos) { m_position = newPos; }
+
+	void loadTexture(const char* filename);
 
 	ParticleSystemData& getData() { return m_data; }
 

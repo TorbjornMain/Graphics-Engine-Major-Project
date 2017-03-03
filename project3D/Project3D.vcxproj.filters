@@ -106,5 +106,14 @@
     <Text Include="BasicParticleBillboardGeom.txt">
       <Filter>Shaders</Filter>
     </Text>
+    <Text Include="BloomFrag.txt">
+      <Filter>Shaders</Filter>
+    </Text>
+    <Text Include="BoxBlurFrag.txt">
+      <Filter>Shaders</Filter>
+    </Text>
+    <Text Include="BasicParticleFragNoTex.txt">
+      <Filter>Shaders</Filter>
+    </Text>
   </ItemGroup>
 </Project>

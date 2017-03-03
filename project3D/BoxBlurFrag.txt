@@ -1,0 +1,43 @@
+#version 410
+
+in vec2 uvs;
+
+uniform sampler2D screen;
+uniform sampler2D depthBuffer;
+
+out vec4 fragColor;
+
+void main()
+{
+	vec2 texel = 1.0f / textureSize(screen, 0).xy; 
+	// 9-tap box kernel 
+	vec4 colour = texture(screen, uvs); 
+	colour += texture(screen, uvs + vec2(-texel.x, texel.y)); 
+	colour += texture(screen, uvs + vec2(-texel.x, 0)); 
+	colour += texture(screen, uvs + vec2(-texel.x, -texel.y)); 
+	colour += texture(screen, uvs + vec2(0, texel.y)); 
+	colour += texture(screen, uvs + vec2(0, -texel.y)); 
+	colour += texture(screen, uvs + vec2(texel.x, texel.y)); 
+	colour += texture(screen, uvs + vec2(texel.x, 0)); 
+	colour += texture(screen, uvs + vec2(texel.x, -texel.y));
+	colour += texture(screen, uvs + vec2(-2*texel.x, 2*texel.y));
+	colour += texture(screen, uvs + vec2(-2*texel.x, texel.y));
+	colour += texture(screen, uvs + vec2(-2*texel.x, 0));
+	colour += texture(screen, uvs + vec2(-2*texel.x, -1*texel.y));
+	colour += texture(screen, uvs + vec2(-2*texel.x, -2*texel.y));
+	colour += texture(screen, uvs + vec2(-1*texel.x, 2*texel.y));
+	colour += texture(screen, uvs + vec2(-1*texel.x, -2*texel.y));
+	colour += texture(screen, uvs + vec2(0, 2*texel.y));
+	colour += texture(screen, uvs + vec2(0, -2*texel.y));
+	colour += texture(screen, uvs + vec2(1*texel.x, 2*texel.y));
+	colour += texture(screen, uvs + vec2(1*texel.x, -2*texel.y));
+	colour += texture(screen, uvs + vec2(2*texel.x, 2*texel.y));
+	colour += texture(screen, uvs + vec2(2*texel.x, texel.y));
+	colour += texture(screen, uvs + vec2(2*texel.x, 0));
+	colour += texture(screen, uvs + vec2(2*texel.x, -1*texel.y));
+	colour += texture(screen, uvs + vec2(2*texel.x, -2*texel.y));
+
+	colour /= 25;
+
+	fragColor = colour;
+}

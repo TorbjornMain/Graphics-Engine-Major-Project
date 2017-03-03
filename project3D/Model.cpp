@@ -205,7 +205,23 @@ void Instance::loadTex(const char * filename)
 	t.load(filename);
 	glGenTextures(1, &m_texture);
 	glBindTexture(GL_TEXTURE_2D, m_texture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, t.getWidth(), t.getHeight(), 0, GL_RGB, GL_UNSIGNED_BYTE, t.getPixels());
+	uint format = 0;
+	switch (t.getFormat())
+	{
+	case(aie::Texture::Format::RED):
+		format = GL_RED;
+		break;
+	case(aie::Texture::Format::RG):
+		format = GL_RG;
+		break;
+	case(aie::Texture::Format::RGB):
+		format = GL_RGB;
+		break;
+	case(aie::Texture::Format::RGBA):
+		format = GL_RGBA;
+		break;
+	}
+	glTexImage2D(GL_TEXTURE_2D, 0, format, t.getWidth(), t.getHeight(), 0, format, GL_UNSIGNED_BYTE, t.getPixels());
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glBindTexture(GL_TEXTURE_2D, 0);

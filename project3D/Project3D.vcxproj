@@ -117,9 +117,12 @@
     <Text Include="BasicFragShaderPlanarMap.txt" />
     <Text Include="BasicParticleBillboardGeom.txt" />
     <Text Include="BasicParticleFrag.txt" />
+    <Text Include="BasicParticleFragNoTex.txt" />
     <Text Include="BasicParticleUpdate.txt" />
     <Text Include="BasicParticleVert.txt" />
     <Text Include="BasicVertShader.txt" />
+    <Text Include="BloomFrag.txt" />
+    <Text Include="BoxBlurFrag.txt" />
     <Text Include="DepthFogFrag.txt" />
     <Text Include="PBRFragShader.txt" />
     <Text Include="PBRFragShaderNoUV.txt" />
