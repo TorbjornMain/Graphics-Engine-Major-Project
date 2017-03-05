@@ -116,7 +116,7 @@ bool Model::loadFromFBX(const char * filename)
 		m_isAnimated = m_model->getSkeletonCount() > 0;
 
 		m_glInfo.resize(m_model->getMeshCount());
-		for (int i = 0; i < m_glInfo.size(); i++)
+		for (uint i = 0; i < m_glInfo.size(); i++)
 		{
 			auto mesh = m_model->getMeshByIndex(i);
 

@@ -124,6 +124,7 @@
     <Text Include="BloomFrag.txt" />
     <Text Include="BoxBlurFrag.txt" />
     <Text Include="DepthFogFrag.txt" />
+    <Text Include="EdgeDetectFrag.txt" />
     <Text Include="PBRFragShader.txt" />
     <Text Include="PBRFragShaderNoUV.txt" />
     <Text Include="PostProcessVert.txt" />

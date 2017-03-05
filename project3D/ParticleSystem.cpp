@@ -20,7 +20,7 @@ ParticleSystem::~ParticleSystem()
 {
 }
 
-void ParticleSystem::init(uint maxParticles, float lifespanMin, float lifespanMax, float velocityMin, float velocityMax, float startSize, float endSize, const glm::vec4 & startColor, const glm::vec4 & endColor, uint upShader, uint drawShader, uint flowField, uint fieldScale, uint texture)
+void ParticleSystem::init(uint maxParticles, float lifespanMin, float lifespanMax, float velocityMin, float velocityMax, float startSize, float endSize, const glm::vec4 & startColor, const glm::vec4 & endColor, uint upShader, uint drawShader, uint flowField, float fieldScale, uint texture)
 {
 	m_data.startColor = startColor;
 	m_data.endColor = endColor;
@@ -83,7 +83,8 @@ void ParticleSystem::initializeUniforms()
 
 void ParticleSystem::draw(float time, const glm::mat4 & camTransform, const glm::mat4 & projectionView)
 {
-	glDepthMask(false);
+
+
 	glUseProgram(m_updateShader);
 
 	glActiveTexture(GL_TEXTURE0);
@@ -136,7 +137,6 @@ void ParticleSystem::draw(float time, const glm::mat4 & camTransform, const glm:
 	glDrawArrays(GL_POINTS, 0, m_data.maxParticles);
 
 	m_activeBuffer = otherBuf;
-	glDepthMask(true);
 }
 
 void ParticleSystem::loadTexture(const char * filename)

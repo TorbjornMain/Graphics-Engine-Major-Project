@@ -11,33 +11,33 @@ void main()
 {
 	vec2 texel = 1.0f / textureSize(screen, 0).xy; 
 	// 9-tap box kernel 
-	vec4 colour = texture(screen, uvs); 
-	colour += texture(screen, uvs + vec2(-texel.x, texel.y)); 
-	colour += texture(screen, uvs + vec2(-texel.x, 0)); 
-	colour += texture(screen, uvs + vec2(-texel.x, -texel.y)); 
-	colour += texture(screen, uvs + vec2(0, texel.y)); 
-	colour += texture(screen, uvs + vec2(0, -texel.y)); 
-	colour += texture(screen, uvs + vec2(texel.x, texel.y)); 
-	colour += texture(screen, uvs + vec2(texel.x, 0)); 
-	colour += texture(screen, uvs + vec2(texel.x, -texel.y));
-	colour += texture(screen, uvs + vec2(-2*texel.x, 2*texel.y));
-	colour += texture(screen, uvs + vec2(-2*texel.x, texel.y));
-	colour += texture(screen, uvs + vec2(-2*texel.x, 0));
-	colour += texture(screen, uvs + vec2(-2*texel.x, -1*texel.y));
-	colour += texture(screen, uvs + vec2(-2*texel.x, -2*texel.y));
-	colour += texture(screen, uvs + vec2(-1*texel.x, 2*texel.y));
-	colour += texture(screen, uvs + vec2(-1*texel.x, -2*texel.y));
-	colour += texture(screen, uvs + vec2(0, 2*texel.y));
-	colour += texture(screen, uvs + vec2(0, -2*texel.y));
-	colour += texture(screen, uvs + vec2(1*texel.x, 2*texel.y));
-	colour += texture(screen, uvs + vec2(1*texel.x, -2*texel.y));
-	colour += texture(screen, uvs + vec2(2*texel.x, 2*texel.y));
-	colour += texture(screen, uvs + vec2(2*texel.x, texel.y));
-	colour += texture(screen, uvs + vec2(2*texel.x, 0));
-	colour += texture(screen, uvs + vec2(2*texel.x, -1*texel.y));
-	colour += texture(screen, uvs + vec2(2*texel.x, -2*texel.y));
+	vec4 color = texture(screen, uvs); 
+	color += texture(screen, uvs + vec2(-texel.x, texel.y)); 
+	color += texture(screen, uvs + vec2(-texel.x, 0)); 
+	color += texture(screen, uvs + vec2(-texel.x, -texel.y)); 
+	color += texture(screen, uvs + vec2(0, texel.y)); 
+	color += texture(screen, uvs + vec2(0, -texel.y)); 
+	color += texture(screen, uvs + vec2(texel.x, texel.y)); 
+	color += texture(screen, uvs + vec2(texel.x, 0)); 
+	color += texture(screen, uvs + vec2(texel.x, -texel.y));
+	color += texture(screen, uvs + vec2(-2*texel.x, 2*texel.y));
+	color += texture(screen, uvs + vec2(-2*texel.x, texel.y));
+	color += texture(screen, uvs + vec2(-2*texel.x, 0));
+	color += texture(screen, uvs + vec2(-2*texel.x, -1*texel.y));
+	color += texture(screen, uvs + vec2(-2*texel.x, -2*texel.y));
+	color += texture(screen, uvs + vec2(-1*texel.x, 2*texel.y));
+	color += texture(screen, uvs + vec2(-1*texel.x, -2*texel.y));
+	color += texture(screen, uvs + vec2(0, 2*texel.y));
+	color += texture(screen, uvs + vec2(0, -2*texel.y));
+	color += texture(screen, uvs + vec2(1*texel.x, 2*texel.y));
+	color += texture(screen, uvs + vec2(1*texel.x, -2*texel.y));
+	color += texture(screen, uvs + vec2(2*texel.x, 2*texel.y));
+	color += texture(screen, uvs + vec2(2*texel.x, texel.y));
+	color += texture(screen, uvs + vec2(2*texel.x, 0));
+	color += texture(screen, uvs + vec2(2*texel.x, -1*texel.y));
+	color += texture(screen, uvs + vec2(2*texel.x, -2*texel.y));
 
-	colour /= 25;
+	color /= 25;
 
-	fragColor = colour;
+	fragColor = color;
 }

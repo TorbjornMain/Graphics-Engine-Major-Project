@@ -15,14 +15,14 @@ void FlowField::init(glm::vec3 shape, VectorFieldGeneratorFunc vfg)
 {
 	m_shape = shape;
 
-	m_storage = new glm::vec3[shape.x * shape.y * shape.z];
-	float* floatStorage = new float[shape.x * shape.y * shape.z * 3];
+	m_storage = new glm::vec3[(uint)shape.x * (uint)shape.y * (uint)shape.z];
+	float* floatStorage = new float[(uint)shape.x * (uint)shape.y * (uint)shape.z * 3];
 
-	for (int x = 0; x < shape.x; x++)
+	for (int x = 0; x < (int)shape.x; x++)
 	{
-		for (int y = 0; y < shape.y; y++)
+		for (int y = 0; y < (int)shape.y; y++)
 		{
-			for (int z = 0; z < shape.z; z++)
+			for (int z = 0; z < (int)shape.z; z++)
 			{
 				glm::vec3 v = ((2*(glm::vec3(x, y, z) / shape)) - 1.f);
 				m_storage[x + ((int)shape.x * (y + (z * (int)(shape.y))))] = squish(vfg(v));

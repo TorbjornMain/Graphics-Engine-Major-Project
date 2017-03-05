@@ -115,5 +115,8 @@
     <Text Include="BasicParticleFragNoTex.txt">
       <Filter>Shaders</Filter>
     </Text>
+    <Text Include="EdgeDetectFrag.txt">
+      <Filter>Shaders</Filter>
+    </Text>
   </ItemGroup>
 </Project>

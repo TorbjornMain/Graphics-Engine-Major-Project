@@ -12,21 +12,22 @@ vec4 Bloom()
 	int power = 8;
 	vec2 texel = 1.0f / textureSize(screen, 0).xy;
 	// 9-tap box kernel
-	vec4 colour = texture(screen, uvs);
+	vec4 color = texture(screen, uvs);
 	for (int dx=-10; dx < 10; dx++)
 	{
 		for (int dy=-10; dy < 10; dy++)
 		{
 			vec4 col = texture(screen, uvs + vec2(-texel.x*dx, texel.y*dy));
-			//colour += vec4(pow(col.x, power), pow(col.y, power), pow(col.z, power), 0);
-			colour += 1.0/(1.0+0.1*(dx*dx+dy*dy)) * vec4(pow(col, vec4(power)));
+			//color += vec4(pow(col.x, power), pow(col.y, power), pow(col.z, power), 0);
+			color += 1.0/(1.0+0.1*(dx*dx+dy*dy)) * vec4(pow(col, vec4(power)));
 		}
 	}
 
-	return colour;
+	return color;
 }
 
 void main()
 {
-	fragColor = Bloom();
+	vec4 col = Bloom();
+	fragColor = col;
 }

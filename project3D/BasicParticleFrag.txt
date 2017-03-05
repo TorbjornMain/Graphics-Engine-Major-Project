@@ -1,14 +1,17 @@
 // FRAGMENT SHADER
 #version 410 
-in vec4 Colour; 
+in vec4 color; 
 in vec2 uvs;
 
 uniform sampler2D tex;
 
 
-out vec4 fragColour; 
+out vec4 fragcolor; 
 
 void main() 
 { 
-	fragColour = Colour * texture(tex, uvs); 
+	vec4 col = color * texture(tex, uvs);
+	if(col.w < 0.1)
+		discard;
+	fragcolor = col;
 }

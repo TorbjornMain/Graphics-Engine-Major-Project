@@ -39,7 +39,7 @@ public:
 	ParticleSystem();
 	~ParticleSystem();
 
-	void init(uint maxParticles, float lifespanMin, float lifespanMax, float velocityMin, float velocityMax, float startSize, float endSize, const glm::vec4& startColor, const glm::vec4& endColor, uint upShader, uint drawShader, uint flowField = -1, uint fieldScale = 0, uint texture = 0);
+	void init(uint maxParticles, float lifespanMin, float lifespanMax, float velocityMin, float velocityMax, float startSize, float endSize, const glm::vec4& startColor, const glm::vec4& endColor, uint upShader, uint drawShader, uint flowField = -1, float fieldScale = 0, uint texture = 0);
 
 	void initializeUniforms();
 
