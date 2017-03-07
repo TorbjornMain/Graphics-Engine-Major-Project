@@ -30,13 +30,17 @@ public:
 	void draw(uint shaderID, glm::mat4 camera, glm::vec4 camPos, float time, uint textureID, glm::mat4 transform);
 	void drawPostProcessQuad(uint shaderID, FrameBuffer buf);
 
-	bool loadFromFBX(const char* filename);
+	bool load(const char* filename);
 	void generateScreenSpaceQuad();
 
+	glm::vec4 getUpperBound() { return m_upperBound; }
+	glm::vec4 getLowerBound() { return m_lowerBound; }
 
 	bool getIsAnimated() { return m_isAnimated; }
 private:
 	std::vector<OpenGLInfo> m_glInfo;
+	glm::vec4 m_upperBound;
+	glm::vec4 m_lowerBound;
 	bool m_isAnimated = false;
 	FBXFile* m_model;
 };
@@ -62,9 +66,10 @@ public:
 
 	void loadTex(const char * filename);
 
-	void draw(glm::mat4 camera, glm::vec4 camPos, float time, float animTime);
+	void draw(glm::mat4 camera, glm::mat4 camTransform, float time, float animTime);
 private:
 	glm::mat4 m_transform;
+
 	uint m_texture;
 	uint m_shader;
 	Model* m_model;

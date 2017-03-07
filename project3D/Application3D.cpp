@@ -33,6 +33,9 @@ bool Application3D::startup() {
 	m_FOV = glm::half_pi<float>();
 
 	m_fb = FrameBuffer(1280, 720);
+	m_previousWindowHeight = getWindowHeight();
+	m_previousWindowWidth = getWindowWidth();
+
 
 	std::cout << "Initialising Gizmos" << std::endl;
 	// initialise gizmo primitive counts
@@ -54,7 +57,7 @@ bool Application3D::startup() {
 	m_testModel = new Model();
 	std::cout << "Loading Models" << std::endl;
 	//m_testModel->loadFromOBJ("C:/Users/Zac/Documents/Graphics-Engine-Major-Project/Meshes/Bunny.obj");
-	m_testModel->loadFromFBX("C:/Users/Zac/Documents/Graphics-Engine-Major-Project/Meshes/mecanimloco.fbx");
+	m_testModel->load("C:/Users/Zac/Documents/Graphics-Engine-Major-Project/Meshes/mecanimloco.fbx");
 	m_scene.AddInstance("spicy boi", m_testModel, m_mainShader->GetID(), "C:/Users/Zac/Documents/Graphics-Engine-Major-Project/Textures/woodtex.jpg", glm::translate(glm::vec3((rand() / (float)INT16_MAX) - 0.5f, (rand() / (float)INT16_MAX) - 0.5f, (rand() / (float)INT16_MAX) - 0.5f) * 20) * glm::scale(glm::vec3(10.f)));
 	m_scene.AddInstance("angry boi", m_testModel, m_mainShader->GetID(), "C:/Users/Zac/Documents/Graphics-Engine-Major-Project/Textures/woodtex.jpg", glm::translate(glm::vec3((rand() / (float)INT16_MAX) - 0.5f, (rand() / (float)INT16_MAX) - 0.5f, (rand() / (float)INT16_MAX) - 0.5f) * 20) * glm::scale(glm::vec3(10.f)));
 
@@ -88,20 +91,15 @@ bool Application3D::startup() {
 		glm::vec3 vec = vec3(3 * x.z, 0.1f, -3 * x.x) - vec3(x.x, 0, x.z) * 10.f;//vec3(2*(cos(x.y) - x.x), 0.01f,2*(sin(x.y) - x.z)); //vec3(x.z, 0.3f, -x.x) - x * 10.f;
 		return vec;
 	};
-	m_vfFuncs[0].init(ffSize, f);
 
-	f = [](glm::vec3 x) {
-		glm::vec3 vec = vec3((cos(x.y) - x.x), 0.5f, (sin(x.y) - x.z));
-		return vec;
-	};
 	m_vfFuncs[1].init(ffSize, f);
 
 	f = [](glm::vec3 x) {
-		glm::vec3 vec = glm::ballRand(5.f);
+		glm::vec3 vec = glm::ballRand(3.f);
 		return vec;
 	};
 
-	m_vfFuncs[2].init(ffSize, f);
+	m_vfFuncs[0].init(ffSize, f);
 ;
 
 	std::cout << "Final Setup" << std::endl;
@@ -109,13 +107,14 @@ bool Application3D::startup() {
 	m_scene.GetParticleSystem("Bandaid").getData().flowField = m_vfFuncs[0].getID();
 	m_scene.GetParticleSystem("Bandaid").getData().fieldScale = 5;
 	m_scene.GetParticleSystem("Bandaid").initializeUniforms();
-	m_scene.AddParticleSystem("GreenerFlare", glm::vec3(0, 0, 0), puShader.GetID(), pShader.GetID(), 10000);
+	m_scene.AddParticleSystem("GreenerFlare", glm::vec3(0, 0, 0), puShader.GetID(), pShader.GetID(), 50000);
 	m_scene.GetParticleSystem("GreenerFlare").getData().flowField = m_vfFuncs[0].getID();
-	m_scene.GetParticleSystem("GreenerFlare").getData().fieldScale = 5;
-	m_scene.GetParticleSystem("GreenerFlare").getData().velocityMax = 0.3f;
+	m_scene.GetParticleSystem("GreenerFlare").getData().fieldScale = 20;
+	m_scene.GetParticleSystem("GreenerFlare").getData().velocityMax = vec3(0.3f);
 	m_scene.GetParticleSystem("GreenerFlare").getData().startColor = vec4(1, 0.8f, 0, 1.f);
-	m_scene.GetParticleSystem("GreenerFlare").getData().endColor = vec4(1, 0.8f, 0, 0.5f);
+	m_scene.GetParticleSystem("GreenerFlare").getData().endColor = vec4(1, 0.8f, 0, 1.f);
 	m_scene.GetParticleSystem("GreenerFlare").getData().startSize = 0.1f;
+	m_scene.GetParticleSystem("GreenerFlare").getData().lifespanMax = 60;
 	m_scene.GetParticleSystem("GreenerFlare").loadTexture("C:/Users/Zac/Documents/Graphics-Engine-Major-Project/Textures/heart.png");
 	m_scene.GetParticleSystem("GreenerFlare").initializeUniforms();
 
@@ -174,22 +173,68 @@ void Application3D::update(float deltaTime) {
 	m_FOV = glm::min(glm::max(m_FOV - (((float)input->getMouseScroll() - m_LSCRL) * deltaTime), glm::pi<float>() / 5), glm::pi<float>() / 1.5f);
 
 	ImGui::Begin("Options");
+
+	//FPS Counter
 	std::string str = "FPS: ";
 	str = str + std::to_string(m_fps);
 	ImGui::LabelText(str.c_str(), "");
-	ImGui::Checkbox("Post Processing", &m_postProcess);
-	if (ImGui::Button("Change Post Process Shader"))
-	{
-		m_curShader = (m_curShader + 1) % c_numShaders;
-		m_mainShader = m_ppShaders + m_curShader;
-	}
-	if (ImGui::Button("Change Vector Field Function"))
-	{
-		m_curFunc = (m_curFunc + 1) % c_funcs;
-		m_scene.GetParticleSystem("GreenerFlare").getData().flowField = m_vfFuncs[m_curFunc].getID();
-	}
-	ImGui::End();
 
+	//Post Processing Toggle
+	ImGui::Checkbox("Post Processing", &m_postProcess);
+
+	//Post Process Shader Selector
+	ImGui::SliderInt("Post Process Shader", &(m_curShader), 0, c_numShaders - 1);
+	m_mainShader = m_ppShaders + m_curShader;
+
+	//Vector Field Function Selector
+	ImGui::SliderInt("Vector Field Function", &(m_curFunc), 0, c_funcs - 1);
+	m_scene.GetParticleSystem("GreenerFlare").getData().flowField = m_vfFuncs[m_curFunc].getID();
+
+	//Max Velocity Tweaker
+	glm::vec3& maxVel = m_scene.GetParticleSystem("GreenerFlare").getData().velocityMax;
+	float maxVelVec[3] = { maxVel.x, maxVel.y, maxVel.z };
+	ImGui::InputFloat3("Velocity Max", maxVelVec);
+	maxVel.x = maxVelVec[0];
+	maxVel.y = maxVelVec[1];
+	maxVel.z = maxVelVec[2];
+
+	//Min Velocity Tweaker
+	glm::vec3& minVel = m_scene.GetParticleSystem("GreenerFlare").getData().velocityMin;
+	float minVelVec[3] = { minVel.x, minVel.y, minVel.z };
+	ImGui::InputFloat3("Velocity Min", minVelVec);
+	minVel.x = minVelVec[0];
+	minVel.y = minVelVec[1];
+	minVel.z = minVelVec[2];
+
+	//Start Color Tweaker
+	glm::vec4& startColor = m_scene.GetParticleSystem("GreenerFlare").getData().startColor;
+	float startColorVec[4] = { startColor.x, startColor.y, startColor.z, startColor.w };
+	ImGui::SliderFloat4("Start Colour", startColorVec, 0, 1);
+	startColor.x = startColorVec[0];
+	startColor.y = startColorVec[1];
+	startColor.z = startColorVec[2];
+	startColor.w = startColorVec[3];
+
+	//End Color Tweaker
+	glm::vec4& endColor = m_scene.GetParticleSystem("GreenerFlare").getData().endColor;
+	float endColorVec[4] = { endColor.x, endColor.y, endColor.z, endColor.w };
+	ImGui::SliderFloat4("End Colour", endColorVec, 0, 1);
+	endColor.x = endColorVec[0];
+	endColor.y = endColorVec[1];
+	endColor.z = endColorVec[2];
+	endColor.w = endColorVec[3];
+
+
+	//Field Scale Slider
+	ImGui::SliderFloat("Field Scale: ", &(m_scene.GetParticleSystem("GreenerFlare").getData().fieldScale), 0.1f, 100);
+	ImGui::End();
+	if (m_previousWindowHeight + m_previousWindowWidth != getWindowWidth() + getWindowHeight())
+	{
+		m_fb.setW(getWindowWidth());
+		m_fb.setH(getWindowHeight());
+		m_fb.RegenBuffer();
+	}
+	m_scene.GetParticleSystem("GreenerFlare").initializeUniforms();
 
 	m_LSCRL = (float)input->getMouseScroll();
 	if (input->isKeyDown(aie::INPUT_KEY_ESCAPE))
@@ -204,14 +249,17 @@ void Application3D::draw() {
 		0.1f, 1000.f);
 
 	Camera c = Camera();
-	c.m_projection = m_projectionMatrix;
-	c.m_view = m_viewMatrix;
-	c.m_transform = m_camTransform;
+	c.projection = m_projectionMatrix;
+	c.view = m_viewMatrix;
+	c.transform = m_camTransform;
+	c.frustumCentreZ = (0.1f + 1000.f) / 2;
 	m_scene.setCamera(c);
 
 	if (m_postProcess)
+	{
 		m_scene.drawToRenderTarget(c, m_fb, getTime(), getWindowWidth(), getWindowHeight());
-	setBackgroundColour(0.25f, 0.25f, 0.25f);
+	}
+		setBackgroundColour(0.25f, 0.25f, 0.25f);
 	// wipe the screen to the background color
 	clearScreen();
 	if (!m_postProcess)

@@ -10,7 +10,9 @@ out vec4 fragcolor;
 
 void main() 
 { 
-	vec4 col = color * texture(tex, uvs);
+	vec4 col = texture(tex, uvs);
+	col.xyz = vec3(1);
+	col = col * color;
 	if(col.w < 0.1)
 		discard;
 	fragcolor = col;

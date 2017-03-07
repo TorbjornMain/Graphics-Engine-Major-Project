@@ -19,7 +19,7 @@ vec4 Bloom()
 		{
 			vec4 col = texture(screen, uvs + vec2(-texel.x*dx, texel.y*dy));
 			//color += vec4(pow(col.x, power), pow(col.y, power), pow(col.z, power), 0);
-			color += 1.0/(1.0+0.1*(dx*dx+dy*dy)) * vec4(pow(col, vec4(power)));
+			color += 1.0/(1.0+0.1*(dx*dx*dx*dx + dy*dy*dy*dy)) * vec4(pow(col, vec4(power)));
 		}
 	}
 

@@ -24,15 +24,17 @@ public:
 
 protected:
 	const int	c_numShaders = 4;
-	const int	c_funcs = 3;
+	const int	c_funcs = 2;
 	glm::mat4	m_camTransform;
 	glm::mat4	m_viewMatrix;
 	glm::mat4	m_projectionMatrix;
 	Shader*		m_mainShader;
 	Shader*		m_ppShaders;
 	FlowField*	m_vfFuncs;
-	uint		m_curShader = 0;
-	uint		m_curFunc = 0;
+	int			m_curShader = 0;
+	int			m_curFunc = 0;
+	int			m_previousWindowWidth = 0;
+	int			m_previousWindowHeight = 0;
 	bool		m_drawModels = true;
 	Model*		m_testModel;
 	Model*		m_ppModel;

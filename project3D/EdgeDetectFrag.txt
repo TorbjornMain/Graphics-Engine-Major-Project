@@ -28,7 +28,7 @@ void main()
 	colorY += 2*texture(screen, uvs + vec2(0, -texel.y)); 
 	colorY += texture(screen, uvs + vec2(texel.x, -texel.y));
 
-	vec4 color = sqrt(pow(colorX, vec4(2)) + pow(colorX, vec4(2)));
+	vec4 color = 0.2*sqrt(pow(colorX, vec4(2)) + pow(colorX, vec4(2)));
 	color = vec4(vec3(max(max(color.x, color.y), color.z)), 1);
 	vec4 sampledColor =  texture(screen, uvs);
 	fragColor = vec4(max(sampledColor.xyz, color.xyz), 1);

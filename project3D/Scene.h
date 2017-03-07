@@ -9,9 +9,10 @@
 
 struct Camera
 {
-	glm::mat4 m_projection;
-	glm::mat4 m_view;
-	glm::mat4 m_transform;
+	glm::mat4 projection;
+	glm::mat4 view;
+	glm::mat4 transform;
+	float frustumCentreZ;
 };
 
 class Scene

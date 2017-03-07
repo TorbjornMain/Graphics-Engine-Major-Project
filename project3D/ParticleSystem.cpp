@@ -20,7 +20,7 @@ ParticleSystem::~ParticleSystem()
 {
 }
 
-void ParticleSystem::init(uint maxParticles, float lifespanMin, float lifespanMax, float velocityMin, float velocityMax, float startSize, float endSize, const glm::vec4 & startColor, const glm::vec4 & endColor, uint upShader, uint drawShader, uint flowField, float fieldScale, uint texture)
+void ParticleSystem::init(uint maxParticles, float lifespanMin, float lifespanMax, glm::vec3 velocityMin, glm::vec3 velocityMax, float startSize, float endSize, const glm::vec4 & startColor, const glm::vec4 & endColor, uint upShader, uint drawShader, uint flowField, float fieldScale, uint texture)
 {
 	m_data.startColor = startColor;
 	m_data.endColor = endColor;
@@ -40,6 +40,7 @@ void ParticleSystem::init(uint maxParticles, float lifespanMin, float lifespanMa
 	m_data.fieldScale = fieldScale;
 
 	m_particles = new Particle[maxParticles];
+
 
 	m_activeBuffer = 0;
 
@@ -76,52 +77,82 @@ void ParticleSystem::initializeUniforms()
 	loc = glGetUniformLocation(m_updateShader, "fieldScale");
 	glUniform1f(loc, m_data.fieldScale);
 	loc = glGetUniformLocation(m_updateShader, "velMax");
-	glUniform1f(loc, m_data.velocityMax);
+	glUniform3fv(loc, 1, glm::value_ptr(m_data.velocityMax));
 	loc = glGetUniformLocation(m_updateShader, "velMin");
-	glUniform1f(loc, m_data.velocityMin);
+	glUniform3fv(loc, 1, glm::value_ptr(m_data.velocityMin));
+	loc = glGetUniformLocation(m_updateShader, "terminalVel");
+	glUniform1f(loc, c_terminalVelocity);
 }
 
-void ParticleSystem::draw(float time, const glm::mat4 & camTransform, const glm::mat4 & projectionView)
+void ParticleSystem::draw(float time, const glm::mat4 & camTransform, const glm::mat4 & projectionView, float camFrustumCentreZ)
 {
 
+	glm::vec4 planes[6];
+	planes[0] = glm::vec4( projectionView[0][3] - projectionView[0][0], projectionView[1][3] - projectionView[1][0], projectionView[2][3] - projectionView[2][0], projectionView[3][3] - projectionView[3][0]);
+	planes[1] = glm::vec4( projectionView[0][3] + projectionView[0][0], projectionView[1][3] + projectionView[1][0], projectionView[2][3] + projectionView[2][0], projectionView[3][3] + projectionView[3][0]); 
+	planes[2] = glm::vec4( projectionView[0][3] - projectionView[0][1], projectionView[1][3] - projectionView[1][1], projectionView[2][3] - projectionView[2][1], projectionView[3][3] - projectionView[3][1]);
+	planes[3] = glm::vec4( projectionView[0][3] + projectionView[0][1], projectionView[1][3] + projectionView[1][1], projectionView[2][3] + projectionView[2][1], projectionView[3][3] + projectionView[3][1]);
+	planes[4] = glm::vec4( projectionView[0][3] - projectionView[0][2], projectionView[1][3] - projectionView[1][2], projectionView[2][3] - projectionView[2][2], projectionView[3][3] - projectionView[3][2]);
+	planes[5] = glm::vec4( projectionView[0][3] + projectionView[0][2], projectionView[1][3] + projectionView[1][2], projectionView[2][3] + projectionView[2][2], projectionView[3][3] + projectionView[3][2]);
+	
+	bool render = true;
+	for (int i = 0; i < 6; i++)
+	{ 
+		float d = glm::length(glm::vec3(planes[i])); 
+		planes[i] /= d;
 
-	glUseProgram(m_updateShader);
-
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_3D, m_data.flowField);
-
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, m_data.texture);
-
-	int loc = glGetUniformLocation(m_updateShader, "time");
-	glUniform1f(loc, time);
-
-	loc = glGetUniformLocation(m_updateShader, "flowField");
-	glUniform1i(loc, 0);
+		float dist = glm::dot(glm::vec3(planes[i]), m_position) + planes[i].w;
+		if (dist < -c_terminalVelocity * m_data.lifespanMax)
+		{
+			render = false;
+			break;
+		}
+	} 
 
 
 
-	float deltaTime = time - m_lastDrawTime; m_lastDrawTime = time;
-
-	loc = glGetUniformLocation(m_updateShader, "deltaTime");
-	glUniform1f(loc, deltaTime);
-
-	loc = glGetUniformLocation(m_updateShader, "emitterPosition");
-	glUniform3fv(loc, 1, &m_position[0]);
-
-	glEnable(GL_RASTERIZER_DISCARD);
-
-	glBindVertexArray(m_vao[m_activeBuffer]);
+	int loc;
 	uint otherBuf = (m_activeBuffer + 1) % 2;
+	if (render)
+	{
+		glUseProgram(m_updateShader);
 
-	glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, m_vbo[otherBuf]);
-	glBeginTransformFeedback(GL_POINTS);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_3D, m_data.flowField);
 
-	glDrawArrays(GL_POINTS, 0, m_data.maxParticles);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, m_data.texture);
 
-	glEndTransformFeedback();
-	glDisable(GL_RASTERIZER_DISCARD);
-	glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, 0);
+		loc = glGetUniformLocation(m_updateShader, "time");
+		glUniform1f(loc, time);
+
+		loc = glGetUniformLocation(m_updateShader, "flowField");
+		glUniform1i(loc, 0);
+
+
+
+		float deltaTime = time - m_lastDrawTime; m_lastDrawTime = time;
+
+		loc = glGetUniformLocation(m_updateShader, "deltaTime");
+		glUniform1f(loc, deltaTime);
+
+		loc = glGetUniformLocation(m_updateShader, "emitterPosition");
+		glUniform3fv(loc, 1, &m_position[0]);
+
+		glEnable(GL_RASTERIZER_DISCARD);
+
+		glBindVertexArray(m_vao[m_activeBuffer]);
+
+
+		glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, m_vbo[otherBuf]);
+		glBeginTransformFeedback(GL_POINTS);
+
+		glDrawArrays(GL_POINTS, 0, m_data.maxParticles);
+
+		glEndTransformFeedback();
+		glDisable(GL_RASTERIZER_DISCARD);
+		glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, 0);
+	}
 
 	glUseProgram(m_drawShader);
 	loc = glGetUniformLocation(m_drawShader,"projectionView");

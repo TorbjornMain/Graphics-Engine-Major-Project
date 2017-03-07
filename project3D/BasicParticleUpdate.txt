@@ -14,8 +14,9 @@ uniform float time;
 uniform float deltaTime; 
 uniform float lifeMin; 
 uniform float lifeMax;
-uniform float velMin;
-uniform float velMax;
+uniform vec3 velMin;
+uniform vec3 velMax;
+uniform float terminalVel = 10;
 uniform vec3 emitterPosition;
 uniform sampler3D flowField;
 uniform float fieldScale;
@@ -41,6 +42,10 @@ void main()
 	vec3 P = position = Position + Velocity * deltaTime;
 	vec3 flowVel = unsquish(texture(flowField, ((P - emitterPosition)/(2*fieldScale)) + 0.5).xyz);
 	velocity = Velocity + flowVel * deltaTime;
+	if(length(velocity) > length(terminalVel))
+	{
+		velocity = normalize(velocity) * terminalVel;
+	}
 	lifetime = Lifetime + deltaTime; 
 	lifespan = Lifespan; 
 	// emit a new particle as soon as it dies 

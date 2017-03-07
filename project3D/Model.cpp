@@ -7,6 +7,7 @@
 #include <gl_core_4_4.h>
 #include <iostream>
 #include <Texture.h>
+#include <Gizmos.h>
 
 Model::Model()
 {
@@ -106,20 +107,24 @@ void Model::drawPostProcessQuad(uint shaderID, FrameBuffer buf)
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 }
 
-bool Model::loadFromFBX(const char * filename)
+bool Model::load(const char * filename)
 {
 	m_model = new FBXFile();
 	bool ret = m_model->load(filename);
  	if (ret)
 	{
-
 		m_isAnimated = m_model->getSkeletonCount() > 0;
-
+		m_upperBound = glm::zero<glm::vec4>();
+		m_lowerBound = glm::zero<glm::vec4>();
 		m_glInfo.resize(m_model->getMeshCount());
 		for (uint i = 0; i < m_glInfo.size(); i++)
 		{
 			auto mesh = m_model->getMeshByIndex(i);
-
+			for (auto i : mesh->m_vertices)
+			{
+				m_upperBound = glm::max(m_upperBound, i.position);
+				m_lowerBound = glm::min(m_upperBound, i.position);
+			}
 			glGenVertexArrays(1, &m_glInfo[i].m_VAO);
 			glGenBuffers(1, &m_glInfo[i].m_VBO);
 			glGenBuffers(1, &m_glInfo[i].m_IBO);
@@ -227,8 +232,38 @@ void Instance::loadTex(const char * filename)
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-void Instance::draw(glm::mat4 camera, glm::vec4 camPos, float time, float animTime)
+void Instance::draw(glm::mat4 camera, glm::mat4 camTransform, float time, float animTime)
 {
-	m_model->update(animTime);
-	m_model->draw(m_shader, camera, camPos, time, m_texture, m_transform);
+	glm::vec3 centre = glm::vec3(m_model->getUpperBound() + m_model->getLowerBound())/2;
+	float radius = (glm::vec3(m_model->getUpperBound() - m_model->getLowerBound())).length()/2;
+
+	glm::vec4 planes[6];
+	planes[0] = glm::vec4(camera[0][3] - camera[0][0], camera[1][3] - camera[1][0], camera[2][3] - camera[2][0], camera[3][3] - camera[3][0]);
+	planes[1] = glm::vec4(camera[0][3] + camera[0][0], camera[1][3] + camera[1][0], camera[2][3] + camera[2][0], camera[3][3] + camera[3][0]);
+	planes[2] = glm::vec4(camera[0][3] - camera[0][1], camera[1][3] - camera[1][1], camera[2][3] - camera[2][1], camera[3][3] - camera[3][1]);
+	planes[3] = glm::vec4(camera[0][3] + camera[0][1], camera[1][3] + camera[1][1], camera[2][3] + camera[2][1], camera[3][3] + camera[3][1]);
+	planes[4] = glm::vec4(camera[0][3] - camera[0][2], camera[1][3] - camera[1][2], camera[2][3] - camera[2][2], camera[3][3] - camera[3][2]);
+	planes[5] = glm::vec4(camera[0][3] + camera[0][2], camera[1][3] + camera[1][2], camera[2][3] + camera[2][2], camera[3][3] + camera[3][2]);
+
+	bool render = true;
+	for (int i = 0; i < 6; i++)
+	{
+		float d = glm::length(glm::vec3(planes[i]));
+		planes[i] /= d;
+
+		float dist = glm::dot(glm::vec3(planes[i]), glm::vec3(glm::column(m_transform, 3))) + planes[i].w;
+		if (dist < -radius)
+		{
+			render = false;
+			break;
+		}
+
+	}
+
+
+	if (render)
+	{
+		m_model->update(animTime);
+		m_model->draw(m_shader, camera, glm::column(camTransform, 3), time, m_texture, m_transform);
+	}
 }
