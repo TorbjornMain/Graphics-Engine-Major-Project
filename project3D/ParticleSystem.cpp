@@ -1,6 +1,8 @@
 #include "ParticleSystem.h"
 #include <gl_core_4_4.h>
 #include <Texture.h>
+#include <Gizmos.h>
+#include <iostream>
 
 ParticleSystem::ParticleSystem() : m_particles(nullptr)
 {
@@ -30,12 +32,12 @@ void ParticleSystem::init(uint maxParticles, float lifespanMin, float lifespanMa
 
 	m_data.velocityMin = velocityMin;
 	m_data.velocityMax = velocityMax;
-	
+
 	m_data.lifespanMin = lifespanMin;
 	m_data.lifespanMax = lifespanMax;
 
 	m_data.maxParticles = maxParticles;
-	
+
 	m_data.flowField = flowField;
 	m_data.fieldScale = fieldScale;
 
@@ -87,18 +89,20 @@ void ParticleSystem::initializeUniforms()
 void ParticleSystem::draw(float time, const glm::mat4 & camTransform, const glm::mat4 & projectionView, float camFrustumCentreZ)
 {
 
+	initializeUniforms();
+
 	glm::vec4 planes[6];
-	planes[0] = glm::vec4( projectionView[0][3] - projectionView[0][0], projectionView[1][3] - projectionView[1][0], projectionView[2][3] - projectionView[2][0], projectionView[3][3] - projectionView[3][0]);
-	planes[1] = glm::vec4( projectionView[0][3] + projectionView[0][0], projectionView[1][3] + projectionView[1][0], projectionView[2][3] + projectionView[2][0], projectionView[3][3] + projectionView[3][0]); 
-	planes[2] = glm::vec4( projectionView[0][3] - projectionView[0][1], projectionView[1][3] - projectionView[1][1], projectionView[2][3] - projectionView[2][1], projectionView[3][3] - projectionView[3][1]);
-	planes[3] = glm::vec4( projectionView[0][3] + projectionView[0][1], projectionView[1][3] + projectionView[1][1], projectionView[2][3] + projectionView[2][1], projectionView[3][3] + projectionView[3][1]);
-	planes[4] = glm::vec4( projectionView[0][3] - projectionView[0][2], projectionView[1][3] - projectionView[1][2], projectionView[2][3] - projectionView[2][2], projectionView[3][3] - projectionView[3][2]);
-	planes[5] = glm::vec4( projectionView[0][3] + projectionView[0][2], projectionView[1][3] + projectionView[1][2], projectionView[2][3] + projectionView[2][2], projectionView[3][3] + projectionView[3][2]);
-	
+	planes[0] = glm::vec4(projectionView[0][3] - projectionView[0][0], projectionView[1][3] - projectionView[1][0], projectionView[2][3] - projectionView[2][0], projectionView[3][3] - projectionView[3][0]);
+	planes[1] = glm::vec4(projectionView[0][3] + projectionView[0][0], projectionView[1][3] + projectionView[1][0], projectionView[2][3] + projectionView[2][0], projectionView[3][3] + projectionView[3][0]);
+	planes[2] = glm::vec4(projectionView[0][3] - projectionView[0][1], projectionView[1][3] - projectionView[1][1], projectionView[2][3] - projectionView[2][1], projectionView[3][3] - projectionView[3][1]);
+	planes[3] = glm::vec4(projectionView[0][3] + projectionView[0][1], projectionView[1][3] + projectionView[1][1], projectionView[2][3] + projectionView[2][1], projectionView[3][3] + projectionView[3][1]);
+	planes[4] = glm::vec4(projectionView[0][3] - projectionView[0][2], projectionView[1][3] - projectionView[1][2], projectionView[2][3] - projectionView[2][2], projectionView[3][3] - projectionView[3][2]);
+	planes[5] = glm::vec4(projectionView[0][3] + projectionView[0][2], projectionView[1][3] + projectionView[1][2], projectionView[2][3] + projectionView[2][2], projectionView[3][3] + projectionView[3][2]);
+
 	bool render = true;
 	for (int i = 0; i < 6; i++)
-	{ 
-		float d = glm::length(glm::vec3(planes[i])); 
+	{
+		float d = glm::length(glm::vec3(planes[i]));
 		planes[i] /= d;
 
 		float dist = glm::dot(glm::vec3(planes[i]), m_position) + planes[i].w;
@@ -107,67 +111,66 @@ void ParticleSystem::draw(float time, const glm::mat4 & camTransform, const glm:
 			render = false;
 			break;
 		}
-	} 
-
-
+	}
 
 	int loc;
 	uint otherBuf = (m_activeBuffer + 1) % 2;
-	if (render)
-	{
-		glUseProgram(m_updateShader);
 
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_3D, m_data.flowField);
+	glUseProgram(m_updateShader);
 
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, m_data.texture);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_3D, m_data.flowField);
 
-		loc = glGetUniformLocation(m_updateShader, "time");
-		glUniform1f(loc, time);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, m_data.texture);
 
-		loc = glGetUniformLocation(m_updateShader, "flowField");
-		glUniform1i(loc, 0);
+	loc = glGetUniformLocation(m_updateShader, "time");
+	glUniform1f(loc, time);
 
+	loc = glGetUniformLocation(m_updateShader, "flowField");
+	glUniform1i(loc, 0);
 
 
-		float deltaTime = time - m_lastDrawTime; m_lastDrawTime = time;
 
-		loc = glGetUniformLocation(m_updateShader, "deltaTime");
-		glUniform1f(loc, deltaTime);
+	float deltaTime = time - m_lastDrawTime; m_lastDrawTime = time;
 
-		loc = glGetUniformLocation(m_updateShader, "emitterPosition");
-		glUniform3fv(loc, 1, &m_position[0]);
+	loc = glGetUniformLocation(m_updateShader, "deltaTime");
+	glUniform1f(loc, deltaTime);
 
-		glEnable(GL_RASTERIZER_DISCARD);
+	loc = glGetUniformLocation(m_updateShader, "emitterPosition");
+	glUniform3fv(loc, 1, &m_position[0]);
 
-		glBindVertexArray(m_vao[m_activeBuffer]);
+	glEnable(GL_RASTERIZER_DISCARD);
 
-
-		glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, m_vbo[otherBuf]);
-		glBeginTransformFeedback(GL_POINTS);
-
-		glDrawArrays(GL_POINTS, 0, m_data.maxParticles);
-
-		glEndTransformFeedback();
-		glDisable(GL_RASTERIZER_DISCARD);
-		glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, 0);
-	}
-
-	glUseProgram(m_drawShader);
-	loc = glGetUniformLocation(m_drawShader,"projectionView");
-	glUniformMatrix4fv(loc, 1, false, &projectionView[0][0]);
-	loc = glGetUniformLocation(m_drawShader, "cameraTransform");
-	glUniformMatrix4fv(loc, 1, false, &camTransform[0][0]);
-
-	loc = glGetUniformLocation(m_drawShader, "tex");
-	glUniform1i(loc, 1);
+	glBindVertexArray(m_vao[m_activeBuffer]);
 
 
-	glBindVertexArray(m_vao[otherBuf]);
+	glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, m_vbo[otherBuf]);
+	glBeginTransformFeedback(GL_POINTS);
+
 	glDrawArrays(GL_POINTS, 0, m_data.maxParticles);
 
+	glEndTransformFeedback();
+	glDisable(GL_RASTERIZER_DISCARD);
+	glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, 0);
+
+	if (render == true)
+	{
+		glUseProgram(m_drawShader);
+		loc = glGetUniformLocation(m_drawShader, "projectionView");
+		glUniformMatrix4fv(loc, 1, false, &projectionView[0][0]);
+		loc = glGetUniformLocation(m_drawShader, "cameraTransform");
+		glUniformMatrix4fv(loc, 1, false, &camTransform[0][0]);
+
+		loc = glGetUniformLocation(m_drawShader, "tex");
+		glUniform1i(loc, 1);
+
+
+		glBindVertexArray(m_vao[otherBuf]);
+		glDrawArrays(GL_POINTS, 0, m_data.maxParticles - 1);
+	}
 	m_activeBuffer = otherBuf;
+	std::cout << m_activeBuffer << std::endl;
 }
 
 void ParticleSystem::loadTexture(const char * filename)
@@ -207,7 +210,7 @@ void ParticleSystem::genBuffers()
 	glBindVertexArray(m_vao[0]);
 	glBindBuffer(GL_ARRAY_BUFFER, m_vbo[0]);
 	glBufferData(GL_ARRAY_BUFFER, m_data.maxParticles * sizeof(Particle), m_particles, GL_STREAM_DRAW);
-	
+
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
 	glEnableVertexAttribArray(2);
@@ -216,7 +219,7 @@ void ParticleSystem::genBuffers()
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Particle), ((char*)0) + 12);
 	glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, sizeof(Particle), ((char*)0) + 24);
 	glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, sizeof(Particle), ((char*)0) + 28);
-	
+
 	glBindVertexArray(m_vao[1]);
 	glBindBuffer(GL_ARRAY_BUFFER, m_vbo[1]);
 	glBufferData(GL_ARRAY_BUFFER, m_data.maxParticles * sizeof(Particle), 0, GL_STREAM_DRAW);

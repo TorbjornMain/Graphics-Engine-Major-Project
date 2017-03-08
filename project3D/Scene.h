@@ -31,6 +31,9 @@ public:
 	Camera getCamera() { return m_camera; }
 	void setCamera(Camera cam) { m_camera = cam; };
 
+	bool b_renderParticles = true;
+	bool b_renderModels = true;
+	bool b_renderGizmos = false;
 
 private:
 	std::map<char* , Instance> m_instances;

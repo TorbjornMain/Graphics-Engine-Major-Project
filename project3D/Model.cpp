@@ -122,8 +122,8 @@ bool Model::load(const char * filename)
 			auto mesh = m_model->getMeshByIndex(i);
 			for (auto i : mesh->m_vertices)
 			{
-				m_upperBound = glm::max(m_upperBound, i.position);
-				m_lowerBound = glm::min(m_upperBound, i.position);
+				m_upperBound = glm::vec4(glm::max(m_upperBound.x, i.position.x), glm::max(m_upperBound.y, i.position.y), glm::max(m_upperBound.z, i.position.z), 1);
+				m_lowerBound = glm::vec4(glm::min(m_lowerBound.x, i.position.x), glm::min(m_lowerBound.y, i.position.y), glm::min(m_lowerBound.z, i.position.z), 1);
 			}
 			glGenVertexArrays(1, &m_glInfo[i].m_VAO);
 			glGenBuffers(1, &m_glInfo[i].m_VBO);
@@ -234,8 +234,11 @@ void Instance::loadTex(const char * filename)
 
 void Instance::draw(glm::mat4 camera, glm::mat4 camTransform, float time, float animTime)
 {
-	glm::vec3 centre = glm::vec3(m_model->getUpperBound() + m_model->getLowerBound())/2;
-	float radius = (glm::vec3(m_model->getUpperBound() - m_model->getLowerBound())).length()/2;
+	glm::vec4 centre = m_transform * ((m_model->getUpperBound() + m_model->getLowerBound())/2);
+	float radius = (glm::vec3(m_transform*m_model->getUpperBound() - m_transform*m_model->getLowerBound())).length()/2;
+
+	aie::Gizmos::addSphere(glm::vec3(centre), radius, 5, 5, glm::vec4(0));
+
 
 	glm::vec4 planes[6];
 	planes[0] = glm::vec4(camera[0][3] - camera[0][0], camera[1][3] - camera[1][0], camera[2][3] - camera[2][0], camera[3][3] - camera[3][0]);
@@ -251,7 +254,7 @@ void Instance::draw(glm::mat4 camera, glm::mat4 camTransform, float time, float 
 		float d = glm::length(glm::vec3(planes[i]));
 		planes[i] /= d;
 
-		float dist = glm::dot(glm::vec3(planes[i]), glm::vec3(glm::column(m_transform, 3))) + planes[i].w;
+		float dist = glm::dot(glm::vec3(planes[i]), glm::vec3(centre)) + planes[i].w;
 		if (dist < -radius)
 		{
 			render = false;

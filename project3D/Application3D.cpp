@@ -53,26 +53,28 @@ bool Application3D::startup() {
 	m_fb.GenBuffer();
 
 	m_mainShader = new Shader();
-	m_mainShader->CompileShaders("C:/Users/Zac/Documents/Graphics-Engine-Major-Project/project3D/BasicVertShader.txt", "C:/Users/Zac/Documents/Graphics-Engine-Major-Project/project3D/PBRFragShader.txt");
+	m_mainShader->CompileShaders("C:/Users/s171558/Documents/Graphics-Engine-Major-Project/project3D/BasicVertShader.txt", "C:/Users/s171558/Documents/Graphics-Engine-Major-Project/project3D/PBRFragShader.txt");
 	m_testModel = new Model();
 	std::cout << "Loading Models" << std::endl;
-	//m_testModel->loadFromOBJ("C:/Users/Zac/Documents/Graphics-Engine-Major-Project/Meshes/Bunny.obj");
-	m_testModel->load("C:/Users/Zac/Documents/Graphics-Engine-Major-Project/Meshes/mecanimloco.fbx");
-	m_scene.AddInstance("spicy boi", m_testModel, m_mainShader->GetID(), "C:/Users/Zac/Documents/Graphics-Engine-Major-Project/Textures/woodtex.jpg", glm::translate(glm::vec3((rand() / (float)INT16_MAX) - 0.5f, (rand() / (float)INT16_MAX) - 0.5f, (rand() / (float)INT16_MAX) - 0.5f) * 20) * glm::scale(glm::vec3(10.f)));
-	m_scene.AddInstance("angry boi", m_testModel, m_mainShader->GetID(), "C:/Users/Zac/Documents/Graphics-Engine-Major-Project/Textures/woodtex.jpg", glm::translate(glm::vec3((rand() / (float)INT16_MAX) - 0.5f, (rand() / (float)INT16_MAX) - 0.5f, (rand() / (float)INT16_MAX) - 0.5f) * 20) * glm::scale(glm::vec3(10.f)));
+	//m_testModel->loadFromOBJ("C:/Users/s171558/Documents/Graphics-Engine-Major-Project/Meshes/Bunny.obj");
+	m_testModel->load("C:/Users/s171558/Documents/Graphics-Engine-Major-Project/Meshes/mecanimloco.fbx");
+	m_testModel->setUpperBound(glm::vec4(0.05, 0.1, 0.05, 1));
+	m_testModel->setLowerBound(glm::vec4(-0.05, 0, -0.05, 1));
+	m_scene.AddInstance("spicy boi", m_testModel, m_mainShader->GetID(), "C:/Users/s171558/Documents/Graphics-Engine-Major-Project/Textures/woodtex.jpg", glm::translate(glm::vec3((rand() / (float)INT16_MAX) - 0.5f, (rand() / (float)INT16_MAX) - 0.5f, (rand() / (float)INT16_MAX) - 0.5f) * 20) * glm::scale(glm::vec3(10.f)));
+	m_scene.AddInstance("angry boi", m_testModel, m_mainShader->GetID(), "C:/Users/s171558/Documents/Graphics-Engine-Major-Project/Textures/woodtex.jpg", glm::translate(glm::vec3((rand() / (float)INT16_MAX) - 0.5f, (rand() / (float)INT16_MAX) - 0.5f, (rand() / (float)INT16_MAX) - 0.5f) * 20) * glm::scale(glm::vec3(10.f)));
 
 	std::string st = "a";
 	for (int i = 0; i < 15; i++)
 	{
 		st = st + st;
-		m_scene.AddInstance(const_cast<char*>(st.c_str()), m_testModel, m_mainShader->GetID(), "C:/Users/Zac/Documents/Graphics-Engine-Major-Project/Textures/woodtex.jpg", glm::translate(glm::vec3((rand() / (float)INT16_MAX) - 0.5f, (rand() / (float)INT16_MAX) - 0.5f, (rand() / (float)INT16_MAX) - 0.5f) * 20) * glm::scale(glm::vec3(10.f)));
+		m_scene.AddInstance(const_cast<char*>(st.c_str()), m_testModel, m_mainShader->GetID(), "C:/Users/s171558/Documents/Graphics-Engine-Major-Project/Textures/woodtex.jpg", glm::translate(glm::vec3((rand() / (float)INT16_MAX) - 0.5f, (rand() / (float)INT16_MAX) - 0.5f, (rand() / (float)INT16_MAX) - 0.5f) * 20) * glm::scale(glm::vec3(10.f)));
 	}
 	std::cout << "Compiling Shaders" << std::endl;
 	m_ppShaders = new Shader[c_numShaders];
-	m_ppShaders[0].CompileShaders("C:/Users/Zac/Documents/Graphics-Engine-Major-Project/project3D/PostProcessVert.txt", "C:/Users/Zac/Documents/Graphics-Engine-Major-Project/project3D/EdgeDetectFrag.txt");
-	m_ppShaders[1].CompileShaders("C:/Users/Zac/Documents/Graphics-Engine-Major-Project/project3D/PostProcessVert.txt", "C:/Users/Zac/Documents/Graphics-Engine-Major-Project/project3D/BloomFrag.txt");
-	m_ppShaders[2].CompileShaders("C:/Users/Zac/Documents/Graphics-Engine-Major-Project/project3D/PostProcessVert.txt", "C:/Users/Zac/Documents/Graphics-Engine-Major-Project/project3D/BoxBlurFrag.txt");
-	m_ppShaders[3].CompileShaders("C:/Users/Zac/Documents/Graphics-Engine-Major-Project/project3D/PostProcessVert.txt", "C:/Users/Zac/Documents/Graphics-Engine-Major-Project/project3D/DepthFogFrag.txt");
+	m_ppShaders[0].CompileShaders("C:/Users/s171558/Documents/Graphics-Engine-Major-Project/project3D/PostProcessVert.txt", "C:/Users/s171558/Documents/Graphics-Engine-Major-Project/project3D/EdgeDetectFrag.txt");
+	m_ppShaders[1].CompileShaders("C:/Users/s171558/Documents/Graphics-Engine-Major-Project/project3D/PostProcessVert.txt", "C:/Users/s171558/Documents/Graphics-Engine-Major-Project/project3D/BloomFrag.txt");
+	m_ppShaders[2].CompileShaders("C:/Users/s171558/Documents/Graphics-Engine-Major-Project/project3D/PostProcessVert.txt", "C:/Users/s171558/Documents/Graphics-Engine-Major-Project/project3D/BoxBlurFrag.txt");
+	m_ppShaders[3].CompileShaders("C:/Users/s171558/Documents/Graphics-Engine-Major-Project/project3D/PostProcessVert.txt", "C:/Users/s171558/Documents/Graphics-Engine-Major-Project/project3D/DepthFogFrag.txt");
 	m_curShader = 0;
 	m_mainShader = m_ppShaders;
 	m_ppModel = new Model();
@@ -80,9 +82,9 @@ bool Application3D::startup() {
 
 	Shader pShader = Shader();
 	Shader puShader = Shader();
-	pShader.CompileShaders("C:/Users/Zac/Documents/Graphics-Engine-Major-Project/project3D/BasicParticleVert.txt", "C:/Users/Zac/Documents/Graphics-Engine-Major-Project/project3D/BasicParticleFrag.txt", "C:/Users/Zac/Documents/Graphics-Engine-Major-Project/project3D/BasicParticleBillboardGeom.txt");
+	pShader.CompileShaders("C:/Users/s171558/Documents/Graphics-Engine-Major-Project/project3D/BasicParticleVert.txt", "C:/Users/s171558/Documents/Graphics-Engine-Major-Project/project3D/BasicParticleFrag.txt", "C:/Users/s171558/Documents/Graphics-Engine-Major-Project/project3D/BasicParticleBillboardGeom.txt");
 	const char* varyings[] = { "position", "velocity", "lifetime", "lifespan" };
-	puShader.CompileUpdateShader("C:/Users/Zac/Documents/Graphics-Engine-Major-Project/project3D/BasicParticleUpdate.txt", varyings, 4);
+	puShader.CompileUpdateShader("C:/Users/s171558/Documents/Graphics-Engine-Major-Project/project3D/BasicParticleUpdate.txt", varyings, 4);
 	std::cout << "Creating Vector Fields" << std::endl;
 	m_vfFuncs = new FlowField[c_funcs];
 	vec3 ffSize = vec3(128);
@@ -103,10 +105,6 @@ bool Application3D::startup() {
 ;
 
 	std::cout << "Final Setup" << std::endl;
-	m_scene.AddParticleSystem("Bandaid", glm::vec3(0, 0, 0), puShader.GetID(), pShader.GetID(), 0);
-	m_scene.GetParticleSystem("Bandaid").getData().flowField = m_vfFuncs[0].getID();
-	m_scene.GetParticleSystem("Bandaid").getData().fieldScale = 5;
-	m_scene.GetParticleSystem("Bandaid").initializeUniforms();
 	m_scene.AddParticleSystem("GreenerFlare", glm::vec3(0, 0, 0), puShader.GetID(), pShader.GetID(), 50000);
 	m_scene.GetParticleSystem("GreenerFlare").getData().flowField = m_vfFuncs[0].getID();
 	m_scene.GetParticleSystem("GreenerFlare").getData().fieldScale = 20;
@@ -115,8 +113,9 @@ bool Application3D::startup() {
 	m_scene.GetParticleSystem("GreenerFlare").getData().endColor = vec4(1, 0.8f, 0, 1.f);
 	m_scene.GetParticleSystem("GreenerFlare").getData().startSize = 0.1f;
 	m_scene.GetParticleSystem("GreenerFlare").getData().lifespanMax = 60;
-	m_scene.GetParticleSystem("GreenerFlare").loadTexture("C:/Users/Zac/Documents/Graphics-Engine-Major-Project/Textures/heart.png");
+	m_scene.GetParticleSystem("GreenerFlare").loadTexture("C:/Users/s171558/Documents/Graphics-Engine-Major-Project/Textures/heart.png");
 	m_scene.GetParticleSystem("GreenerFlare").initializeUniforms();
+	m_scene.AddParticleSystem("RedFlare", glm::vec3(0, 0, 0), puShader.GetID(), pShader.GetID(), 50000);
 
 	return true;
 }
@@ -170,7 +169,7 @@ void Application3D::update(float deltaTime) {
 	m_lMX = (float)mx;
 	m_lMY = (float)my;
 
-	m_FOV = glm::min(glm::max(m_FOV - (((float)input->getMouseScroll() - m_LSCRL) * deltaTime), glm::pi<float>() / 5), glm::pi<float>() / 1.5f);
+	//m_FOV = glm::min(glm::max(m_FOV - (((float)input->getMouseScroll() - m_LSCRL) * deltaTime), glm::pi<float>() / 5), glm::pi<float>() / 1.5f);
 
 	ImGui::Begin("Options");
 
@@ -182,6 +181,16 @@ void Application3D::update(float deltaTime) {
 	//Post Processing Toggle
 	ImGui::Checkbox("Post Processing", &m_postProcess);
 
+	//Model Render Toggle
+	ImGui::Checkbox("Render Models", &m_scene.b_renderModels);
+
+
+	//Particle Render Toggle
+	ImGui::Checkbox("Render Particles", &m_scene.b_renderParticles);
+
+	//Gizmo Render Toggle
+	ImGui::Checkbox("Render Gizmos", &m_scene.b_renderGizmos);
+
 	//Post Process Shader Selector
 	ImGui::SliderInt("Post Process Shader", &(m_curShader), 0, c_numShaders - 1);
 	m_mainShader = m_ppShaders + m_curShader;
@@ -191,39 +200,22 @@ void Application3D::update(float deltaTime) {
 	m_scene.GetParticleSystem("GreenerFlare").getData().flowField = m_vfFuncs[m_curFunc].getID();
 
 	//Max Velocity Tweaker
-	glm::vec3& maxVel = m_scene.GetParticleSystem("GreenerFlare").getData().velocityMax;
-	float maxVelVec[3] = { maxVel.x, maxVel.y, maxVel.z };
-	ImGui::InputFloat3("Velocity Max", maxVelVec);
-	maxVel.x = maxVelVec[0];
-	maxVel.y = maxVelVec[1];
-	maxVel.z = maxVelVec[2];
+	ImGui::InputFloat3("Velocity Max", &m_scene.GetParticleSystem("GreenerFlare").getData().velocityMax.x);
 
 	//Min Velocity Tweaker
-	glm::vec3& minVel = m_scene.GetParticleSystem("GreenerFlare").getData().velocityMin;
-	float minVelVec[3] = { minVel.x, minVel.y, minVel.z };
-	ImGui::InputFloat3("Velocity Min", minVelVec);
-	minVel.x = minVelVec[0];
-	minVel.y = minVelVec[1];
-	minVel.z = minVelVec[2];
+	ImGui::InputFloat3("Velocity Min", &m_scene.GetParticleSystem("GreenerFlare").getData().velocityMin.x);
 
 	//Start Color Tweaker
-	glm::vec4& startColor = m_scene.GetParticleSystem("GreenerFlare").getData().startColor;
-	float startColorVec[4] = { startColor.x, startColor.y, startColor.z, startColor.w };
-	ImGui::SliderFloat4("Start Colour", startColorVec, 0, 1);
-	startColor.x = startColorVec[0];
-	startColor.y = startColorVec[1];
-	startColor.z = startColorVec[2];
-	startColor.w = startColorVec[3];
+	ImGui::SliderFloat4("Start Colour", &m_scene.GetParticleSystem("GreenerFlare").getData().startColor.x, 0, 1);
 
 	//End Color Tweaker
-	glm::vec4& endColor = m_scene.GetParticleSystem("GreenerFlare").getData().endColor;
-	float endColorVec[4] = { endColor.x, endColor.y, endColor.z, endColor.w };
-	ImGui::SliderFloat4("End Colour", endColorVec, 0, 1);
-	endColor.x = endColorVec[0];
-	endColor.y = endColorVec[1];
-	endColor.z = endColorVec[2];
-	endColor.w = endColorVec[3];
+	ImGui::SliderFloat4("End Colour", &m_scene.GetParticleSystem("GreenerFlare").getData().endColor.x, 0, 1);
 
+	//Lifetime Max
+	ImGui::SliderFloat("Lifetime Max: ", &(m_scene.GetParticleSystem("GreenerFlare").getData().lifespanMax), 0.1f, 100);
+
+	//Lifetime Min
+	ImGui::SliderFloat("Lifetime Min: ", &(m_scene.GetParticleSystem("GreenerFlare").getData().lifespanMin), 0.1f, 100);
 
 	//Field Scale Slider
 	ImGui::SliderFloat("Field Scale: ", &(m_scene.GetParticleSystem("GreenerFlare").getData().fieldScale), 0.1f, 100);

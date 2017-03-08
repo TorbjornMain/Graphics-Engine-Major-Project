@@ -27,17 +27,24 @@ void Scene::drawToRenderTarget(const Camera & renderCam, FrameBuffer & buf, floa
 
 void Scene::draw(float time)
 {
-
-	for (auto iter = m_instances.begin(); iter != m_instances.end(); iter++)
+	if (b_renderModels)
 	{
-		iter->second.draw(m_camera.projection * m_camera.view, m_camera.transform, time, time);
+		for (auto iter = m_instances.begin(); iter != m_instances.end(); iter++)
+		{
+			iter->second.draw(m_camera.projection * m_camera.view, m_camera.transform, time, time);
+		}
 	}
-	for (auto iter = m_particleSystems.begin(); iter != m_particleSystems.end(); iter++)
+	if (b_renderParticles)
 	{
-		iter->second.draw(time, m_camera.transform, m_camera.projection * m_camera.view, m_camera.frustumCentreZ);
+		for (auto iter = m_particleSystems.begin(); iter != m_particleSystems.end(); iter++)
+		{
+			iter->second.draw(time, m_camera.transform, m_camera.projection * m_camera.view, m_camera.frustumCentreZ);
+		}
 	}
-	aie::Gizmos::draw(m_camera.projection * m_camera.view);
-	
+	if (b_renderGizmos)
+	{
+		aie::Gizmos::draw(m_camera.projection * m_camera.view);
+	}
 }
 
 void Scene::AddInstance(char* name, Model * model, uint shader, uint texture, glm::mat4 transform)

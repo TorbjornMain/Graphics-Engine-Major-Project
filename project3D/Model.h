@@ -34,7 +34,9 @@ public:
 	void generateScreenSpaceQuad();
 
 	glm::vec4 getUpperBound() { return m_upperBound; }
+	void setUpperBound(glm::vec4 val) { m_upperBound = val; }
 	glm::vec4 getLowerBound() { return m_lowerBound; }
+	void setLowerBound(glm::vec4 val) { m_lowerBound = val; }
 
 	bool getIsAnimated() { return m_isAnimated; }
 private:
