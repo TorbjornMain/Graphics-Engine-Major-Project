@@ -32,6 +32,7 @@ void ParticleSystem::init(uint maxParticles, float lifespanMin, float lifespanMa
 
 	m_data.velocityMin = velocityMin;
 	m_data.velocityMax = velocityMax;
+	m_data.gravity = glm::vec3(0, 0, 0);
 
 	m_data.lifespanMin = lifespanMin;
 	m_data.lifespanMax = lifespanMax;
@@ -40,6 +41,7 @@ void ParticleSystem::init(uint maxParticles, float lifespanMin, float lifespanMa
 
 	m_data.flowField = flowField;
 	m_data.fieldScale = fieldScale;
+	m_data.fieldOffset = glm::vec3(0, 0, 0);
 
 	m_particles = new Particle[maxParticles];
 
@@ -69,6 +71,7 @@ void ParticleSystem::initializeUniforms()
 	glUniform4fv(loc, 1, &m_data.startColor[0]);
 	loc = glGetUniformLocation(m_drawShader, "colorEnd");
 	glUniform4fv(loc, 1, &m_data.endColor[0]);
+	
 
 	glUseProgram(m_updateShader);
 
@@ -84,6 +87,11 @@ void ParticleSystem::initializeUniforms()
 	glUniform3fv(loc, 1, glm::value_ptr(m_data.velocityMin));
 	loc = glGetUniformLocation(m_updateShader, "terminalVel");
 	glUniform1f(loc, c_terminalVelocity);
+	loc = glGetUniformLocation(m_updateShader, "gravity");
+	glUniform3fv(loc, 1, glm::value_ptr(m_data.gravity));
+	loc = glGetUniformLocation(m_updateShader, "fieldOffset");
+	glUniform3fv(loc, 1, glm::value_ptr(m_data.fieldOffset));
+
 }
 
 void ParticleSystem::draw(float time, const glm::mat4 & camTransform, const glm::mat4 & projectionView, float camFrustumCentreZ)
@@ -170,7 +178,6 @@ void ParticleSystem::draw(float time, const glm::mat4 & camTransform, const glm:
 		glDrawArrays(GL_POINTS, 0, m_data.maxParticles - 1);
 	}
 	m_activeBuffer = otherBuf;
-	std::cout << m_activeBuffer << std::endl;
 }
 
 void ParticleSystem::loadTexture(const char * filename)

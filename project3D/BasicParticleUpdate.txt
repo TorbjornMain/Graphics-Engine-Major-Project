@@ -16,10 +16,12 @@ uniform float lifeMin;
 uniform float lifeMax;
 uniform vec3 velMin;
 uniform vec3 velMax;
+uniform vec3 gravity;
 uniform float terminalVel = 10;
 uniform vec3 emitterPosition;
 uniform sampler3D flowField;
 uniform float fieldScale;
+uniform vec3 fieldOffset;
 
 const float INVERSE_MAX_UINT = 1.0f / 4294967295.0f; 
 
@@ -34,14 +36,15 @@ float rand(uint seed, float range)
 
 vec3 unsquish(vec3 x)
 {
-	return (x * 20) - vec3(10, 10, 10);
+	return (x * 10) - vec3(5, 5, 5);
 }
 
 void main() 
 { 
 	vec3 P = position = Position + Velocity * deltaTime;
-	vec3 flowVel = unsquish(texture(flowField, ((P - emitterPosition)/(2*fieldScale)) + 0.5).xyz);
-	velocity = Velocity + flowVel * deltaTime;
+	vec3 pos = (((P-(emitterPosition + fieldOffset))/(2*fieldScale)) + 0.5);
+	vec3 flowAcc = round(unsquish(texture(flowField, pos).xyz)*10)/10;
+	velocity = Velocity + (flowAcc + gravity) * deltaTime;
 	if(length(velocity) > length(terminalVel))
 	{
 		velocity = normalize(velocity) * terminalVel;

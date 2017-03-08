@@ -57,6 +57,5 @@ void FrameBuffer::RegenBuffer()
 	glDeleteFramebuffers(1, &m_buf);
 	glDeleteTextures(1, &m_tex);
 	glDeleteTextures(1, &m_dep);
-	
 	GenBuffer();
 }

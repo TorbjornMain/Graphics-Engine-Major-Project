@@ -51,5 +51,5 @@ void FlowField::init(glm::vec3 shape, VectorFieldGeneratorFunc vfg)
 
 glm::vec3 FlowField::squish(glm::vec3 x)
 {
-	return (x + glm::vec3(10, 10, 10))/20;
+	return (x + glm::vec3(5, 5, 5))/10;
 }

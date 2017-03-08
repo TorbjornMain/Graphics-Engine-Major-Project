@@ -93,11 +93,15 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Application3D.cpp" />
-    <ClCompile Include="FlowField.cpp" />
+    <ClCompile Include="FlowField.cpp">
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Disabled</Optimization>
+    </ClCompile>
     <ClCompile Include="FrameBuffer.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Model.cpp" />
-    <ClCompile Include="ParticleSystem.cpp" />
+    <ClCompile Include="ParticleSystem.cpp">
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Disabled</Optimization>
+    </ClCompile>
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Shader.cpp" />
   </ItemGroup>

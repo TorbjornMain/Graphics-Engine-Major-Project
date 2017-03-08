@@ -24,9 +24,12 @@ struct ParticleSystemData
 	float startSize;
 	float endSize;
 
+	glm::vec3 gravity;
+
 	uint texture;
 
 	uint flowField;
+	glm::vec3 fieldOffset;
 	float fieldScale;
 
 	glm::vec4 startColor;
