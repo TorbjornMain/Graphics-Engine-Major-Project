@@ -11,23 +11,16 @@ Scene::~Scene()
 {
 }
 
-void Scene::drawToRenderTarget(const Camera & renderCam, FrameBuffer buf, float time, int screenWidth, int screenHeight)
+void Scene::drawToRenderTarget(const Camera & renderCam, FrameBuffer & buf, float time, int screenWidth, int screenHeight)
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, buf.getBuf());
 	glViewport(0, 0, buf.getW(), buf.getH());
 	glClearColor(0.f, 0.f, 0.f, 1);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 
-	for (auto iter = m_instances.begin(); iter != m_instances.end(); iter++)
-	{
-		iter->second.draw(renderCam.projection * renderCam.view, m_camera.transform, time, time);
-	}
-	for (auto iter = m_particleSystems.begin(); iter != m_particleSystems.end(); iter++)
-	{
-		iter->second.draw(time, renderCam.transform, renderCam.projection * renderCam.view, renderCam.frustumCentreZ);
-	}
-	aie::Gizmos::draw(m_camera.projection * m_camera.view);
+	draw(time);
+
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glViewport(0, 0, screenWidth, screenHeight);
 }
