@@ -117,21 +117,21 @@
     <ClInclude Include="typedefs.h" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="BasicFragShader.txt" />
-    <Text Include="BasicFragShaderPlanarMap.txt" />
-    <Text Include="BasicParticleBillboardGeom.txt" />
-    <Text Include="BasicParticleFrag.txt" />
-    <Text Include="BasicParticleFragNoTex.txt" />
-    <Text Include="BasicParticleUpdate.txt" />
-    <Text Include="BasicParticleVert.txt" />
-    <Text Include="BasicVertShader.txt" />
-    <Text Include="BloomFrag.txt" />
-    <Text Include="BoxBlurFrag.txt" />
-    <Text Include="DepthFogFrag.txt" />
-    <Text Include="EdgeDetectFrag.txt" />
-    <Text Include="PBRFragShader.txt" />
-    <Text Include="PBRFragShaderNoUV.txt" />
-    <Text Include="PostProcessVert.txt" />
+    <Text Include="..\bin\Shaders\BasicFragShader.txt" />
+    <Text Include="..\bin\Shaders\BasicFragShaderPlanarMap.txt" />
+    <Text Include="..\bin\Shaders\BasicParticleBillboardGeom.txt" />
+    <Text Include="..\bin\Shaders\BasicParticleFrag.txt" />
+    <Text Include="..\bin\Shaders\BasicParticleFragNoTex.txt" />
+    <Text Include="..\bin\Shaders\BasicParticleUpdate.txt" />
+    <Text Include="..\bin\Shaders\BasicParticleVert.txt" />
+    <Text Include="..\bin\Shaders\BasicVertShader.txt" />
+    <Text Include="..\bin\Shaders\BloomFrag.txt" />
+    <Text Include="..\bin\Shaders\BoxBlurFrag.txt" />
+    <Text Include="..\bin\Shaders\DepthFogFrag.txt" />
+    <Text Include="..\bin\Shaders\EdgeDetectFrag.txt" />
+    <Text Include="..\bin\Shaders\PBRFragShader.txt" />
+    <Text Include="..\bin\Shaders\PBRFragShaderNoUV.txt" />
+    <Text Include="..\bin\Shaders\PostProcessVert.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -42,6 +42,7 @@ void ParticleSystem::init(uint maxParticles, float lifespanMin, float lifespanMa
 	m_data.flowField = flowField;
 	m_data.fieldScale = fieldScale;
 	m_data.fieldOffset = glm::vec3(0, 0, 0);
+	m_data.fieldStrength = 1;
 
 	m_particles = new Particle[maxParticles];
 
@@ -94,7 +95,8 @@ void ParticleSystem::initializeUniforms()
 	glUniform3fv(loc, 1, glm::value_ptr(m_data.fieldOffset));
 	loc = glGetUniformLocation(m_updateShader, "frictionCoefficient");
 	glUniform1f(loc, m_data.frictionCoefficient);
-
+	loc = glGetUniformLocation(m_updateShader, "fieldStrength");
+	glUniform1f(loc, m_data.fieldStrength);
 }
 
 void ParticleSystem::draw(float time, const glm::mat4 & camTransform, const glm::mat4 & projectionView, float camFrustumCentreZ)

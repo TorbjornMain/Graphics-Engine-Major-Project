@@ -27,6 +27,8 @@ Application3D::~Application3D() {
 
 bool Application3D::startup() {
 
+	system("cd");
+
 	m_scene = Scene();
 	setBackgroundColour(0.25f, 0.25f, 0.25f);
 	m_LSCRL = 0;
@@ -53,28 +55,28 @@ bool Application3D::startup() {
 	m_fb.GenBuffer();
 
 	m_mainShader = new Shader();
-	m_mainShader->CompileShaders("C:/Users/s171558/Documents/Graphics-Engine-Major-Project/project3D/BasicVertShader.txt", "C:/Users/s171558/Documents/Graphics-Engine-Major-Project/project3D/PBRFragShader.txt");
+	m_mainShader->CompileShaders("Shaders/BasicVertShader.txt", "Shaders/PBRFragShader.txt");
 	m_testModel = new Model();
 	std::cout << "Loading Models" << std::endl;
 	//m_testModel->loadFromOBJ("C:/Users/s171558/Documents/Graphics-Engine-Major-Project/Meshes/Bunny.obj");
-	m_testModel->load("C:/Users/s171558/Documents/Graphics-Engine-Major-Project/Meshes/mecanimloco.fbx");
+	m_testModel->load("Meshes/mecanimloco.fbx");
 	m_testModel->setUpperBound(glm::vec4(0.05, 0.1, 0.05, 1));
 	m_testModel->setLowerBound(glm::vec4(-0.05, 0, -0.05, 1));
-	m_scene.AddInstance("spicy boi", m_testModel, m_mainShader->GetID(), "C:/Users/s171558/Documents/Graphics-Engine-Major-Project/Textures/woodtex.jpg", glm::translate(glm::vec3((rand() / (float)INT16_MAX) - 0.5f, (rand() / (float)INT16_MAX) - 0.5f, (rand() / (float)INT16_MAX) - 0.5f) * 20) * glm::scale(glm::vec3(10.f)));
-	m_scene.AddInstance("angry boi", m_testModel, m_mainShader->GetID(), "C:/Users/s171558/Documents/Graphics-Engine-Major-Project/Textures/woodtex.jpg", glm::translate(glm::vec3((rand() / (float)INT16_MAX) - 0.5f, (rand() / (float)INT16_MAX) - 0.5f, (rand() / (float)INT16_MAX) - 0.5f) * 20) * glm::scale(glm::vec3(10.f)));
+	m_scene.AddInstance("spicy boi", m_testModel, m_mainShader->GetID(), "Textures/woodtex.jpg", glm::translate(glm::vec3((rand() / (float)INT16_MAX) - 0.5f, (rand() / (float)INT16_MAX) - 0.5f, (rand() / (float)INT16_MAX) - 0.5f) * 20) * glm::scale(glm::vec3(10.f)));
+	m_scene.AddInstance("angry boi", m_testModel, m_mainShader->GetID(), "Textures/woodtex.jpg", glm::translate(glm::vec3((rand() / (float)INT16_MAX) - 0.5f, (rand() / (float)INT16_MAX) - 0.5f, (rand() / (float)INT16_MAX) - 0.5f) * 20) * glm::scale(glm::vec3(10.f)));
 
 	std::string st = "a";
 	for (int i = 0; i < 15; i++)
 	{
 		st = st + st;
-		m_scene.AddInstance(const_cast<char*>(st.c_str()), m_testModel, m_mainShader->GetID(), "C:/Users/s171558/Documents/Graphics-Engine-Major-Project/Textures/woodtex.jpg", glm::translate(glm::vec3((rand() / (float)INT16_MAX) - 0.5f, (rand() / (float)INT16_MAX) - 0.5f, (rand() / (float)INT16_MAX) - 0.5f) * 20) * glm::scale(glm::vec3(10.f)));
+		m_scene.AddInstance(const_cast<char*>(st.c_str()), m_testModel, m_mainShader->GetID(), "Textures/woodtex.jpg", glm::translate(glm::vec3((rand() / (float)INT16_MAX) - 0.5f, (rand() / (float)INT16_MAX) - 0.5f, (rand() / (float)INT16_MAX) - 0.5f) * 20) * glm::scale(glm::vec3(10.f)));
 	}
 	std::cout << "Compiling Shaders" << std::endl;
 	m_ppShaders = new Shader[c_numShaders];
-	m_ppShaders[0].CompileShaders("C:/Users/s171558/Documents/Graphics-Engine-Major-Project/project3D/PostProcessVert.txt", "C:/Users/s171558/Documents/Graphics-Engine-Major-Project/project3D/BloomFrag.txt");
-	m_ppShaders[1].CompileShaders("C:/Users/s171558/Documents/Graphics-Engine-Major-Project/project3D/PostProcessVert.txt", "C:/Users/s171558/Documents/Graphics-Engine-Major-Project/project3D/EdgeDetectFrag.txt");
-	m_ppShaders[2].CompileShaders("C:/Users/s171558/Documents/Graphics-Engine-Major-Project/project3D/PostProcessVert.txt", "C:/Users/s171558/Documents/Graphics-Engine-Major-Project/project3D/BoxBlurFrag.txt");
-	m_ppShaders[3].CompileShaders("C:/Users/s171558/Documents/Graphics-Engine-Major-Project/project3D/PostProcessVert.txt", "C:/Users/s171558/Documents/Graphics-Engine-Major-Project/project3D/DepthFogFrag.txt");
+	m_ppShaders[0].CompileShaders("Shaders/PostProcessVert.txt", "Shaders/BloomFrag.txt");
+	m_ppShaders[1].CompileShaders("Shaders/PostProcessVert.txt", "Shaders/EdgeDetectFrag.txt");
+	m_ppShaders[2].CompileShaders("Shaders/PostProcessVert.txt", "Shaders/BoxBlurFrag.txt");
+	m_ppShaders[3].CompileShaders("Shaders/PostProcessVert.txt", "Shaders/DepthFogFrag.txt");
 	m_curShader = 0;
 	m_mainShader = m_ppShaders;
 	m_ppModel = new Model();
@@ -82,9 +84,9 @@ bool Application3D::startup() {
 
 	Shader pShader = Shader();
 	Shader puShader = Shader();
-	pShader.CompileShaders("C:/Users/s171558/Documents/Graphics-Engine-Major-Project/project3D/BasicParticleVert.txt", "C:/Users/s171558/Documents/Graphics-Engine-Major-Project/project3D/BasicParticleFrag.txt", "C:/Users/s171558/Documents/Graphics-Engine-Major-Project/project3D/BasicParticleBillboardGeom.txt");
+	pShader.CompileShaders("Shaders/BasicParticleVert.txt", "Shaders/BasicParticleFrag.txt", "Shaders/BasicParticleBillboardGeom.txt");
 	const char* varyings[] = { "position", "velocity", "lifetime", "lifespan" };
-	puShader.CompileUpdateShader("C:/Users/s171558/Documents/Graphics-Engine-Major-Project/project3D/BasicParticleUpdate.txt", varyings, 4);
+	puShader.CompileUpdateShader("Shaders/BasicParticleUpdate.txt", varyings, 4);
 	std::cout << "Creating Vector Fields" << std::endl;
 	m_vfFuncs = new FlowField[c_funcs];
 	vec3 ffSize = vec3(128);
@@ -132,7 +134,7 @@ bool Application3D::startup() {
 	m_scene.GetParticleSystem("GreenerFlare").getData().endColor = vec4(1, 0.8f, 0, 1.f);
 	m_scene.GetParticleSystem("GreenerFlare").getData().startSize = 0.1f;
 	m_scene.GetParticleSystem("GreenerFlare").getData().lifespanMax = 60;
-	m_scene.GetParticleSystem("GreenerFlare").loadTexture("C:/Users/s171558/Documents/Graphics-Engine-Major-Project/Textures/heart.png");
+	m_scene.GetParticleSystem("GreenerFlare").loadTexture("Textures/heart.png");
 	m_scene.GetParticleSystem("GreenerFlare").initializeUniforms();
 	
 
@@ -238,6 +240,9 @@ void Application3D::update(float deltaTime) {
 
 	//Field Scale Slider
 	ImGui::SliderFloat("Field Scale", &(m_scene.GetParticleSystem("GreenerFlare").getData().fieldScale), 0.1f, 100);
+
+	//Field Strength Slider
+	ImGui::SliderFloat("Field Strength", &(m_scene.GetParticleSystem("GreenerFlare").getData().fieldStrength), 0.1f, 10);
 
 	//Field Offset Input
 	ImGui::InputFloat3("Field Offset", &(m_scene.GetParticleSystem("GreenerFlare").getData().fieldOffset.x));

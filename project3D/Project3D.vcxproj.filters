@@ -73,49 +73,49 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="BasicVertShader.txt">
+    <Text Include="..\bin\Shaders\BasicFragShader.txt">
       <Filter>Shaders</Filter>
     </Text>
-    <Text Include="BasicFragShader.txt">
+    <Text Include="..\bin\Shaders\BasicFragShaderPlanarMap.txt">
       <Filter>Shaders</Filter>
     </Text>
-    <Text Include="PBRFragShader.txt">
+    <Text Include="..\bin\Shaders\BasicParticleBillboardGeom.txt">
       <Filter>Shaders</Filter>
     </Text>
-    <Text Include="PBRFragShaderNoUV.txt">
+    <Text Include="..\bin\Shaders\BasicParticleFrag.txt">
       <Filter>Shaders</Filter>
     </Text>
-    <Text Include="BasicFragShaderPlanarMap.txt">
+    <Text Include="..\bin\Shaders\BasicParticleFragNoTex.txt">
       <Filter>Shaders</Filter>
     </Text>
-    <Text Include="PostProcessVert.txt">
+    <Text Include="..\bin\Shaders\BasicParticleUpdate.txt">
       <Filter>Shaders</Filter>
     </Text>
-    <Text Include="DepthFogFrag.txt">
+    <Text Include="..\bin\Shaders\BasicParticleVert.txt">
       <Filter>Shaders</Filter>
     </Text>
-    <Text Include="BasicParticleUpdate.txt">
+    <Text Include="..\bin\Shaders\BasicVertShader.txt">
       <Filter>Shaders</Filter>
     </Text>
-    <Text Include="BasicParticleVert.txt">
+    <Text Include="..\bin\Shaders\BloomFrag.txt">
       <Filter>Shaders</Filter>
     </Text>
-    <Text Include="BasicParticleFrag.txt">
+    <Text Include="..\bin\Shaders\BoxBlurFrag.txt">
       <Filter>Shaders</Filter>
     </Text>
-    <Text Include="BasicParticleBillboardGeom.txt">
+    <Text Include="..\bin\Shaders\DepthFogFrag.txt">
       <Filter>Shaders</Filter>
     </Text>
-    <Text Include="BloomFrag.txt">
+    <Text Include="..\bin\Shaders\EdgeDetectFrag.txt">
       <Filter>Shaders</Filter>
     </Text>
-    <Text Include="BoxBlurFrag.txt">
+    <Text Include="..\bin\Shaders\PBRFragShader.txt">
       <Filter>Shaders</Filter>
     </Text>
-    <Text Include="BasicParticleFragNoTex.txt">
+    <Text Include="..\bin\Shaders\PBRFragShaderNoUV.txt">
       <Filter>Shaders</Filter>
     </Text>
-    <Text Include="EdgeDetectFrag.txt">
+    <Text Include="..\bin\Shaders\PostProcessVert.txt">
       <Filter>Shaders</Filter>
     </Text>
   </ItemGroup>

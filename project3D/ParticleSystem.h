@@ -32,6 +32,7 @@ struct ParticleSystemData
 	uint flowField;
 	glm::vec3 fieldOffset;
 	float fieldScale;
+	float fieldStrength;
 
 	glm::vec4 startColor;
 	glm::vec4 endColor;
