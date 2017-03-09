@@ -45,6 +45,7 @@ void ParticleSystem::init(uint maxParticles, float lifespanMin, float lifespanMa
 
 	m_particles = new Particle[maxParticles];
 
+	m_data.frictionCoefficient = 1;
 
 	m_activeBuffer = 0;
 
@@ -91,6 +92,8 @@ void ParticleSystem::initializeUniforms()
 	glUniform3fv(loc, 1, glm::value_ptr(m_data.gravity));
 	loc = glGetUniformLocation(m_updateShader, "fieldOffset");
 	glUniform3fv(loc, 1, glm::value_ptr(m_data.fieldOffset));
+	loc = glGetUniformLocation(m_updateShader, "frictionCoefficient");
+	glUniform1f(loc, m_data.frictionCoefficient);
 
 }
 

@@ -22,6 +22,8 @@ uniform vec3 emitterPosition;
 uniform sampler3D flowField;
 uniform float fieldScale;
 uniform vec3 fieldOffset;
+uniform float frictionCoefficient; 
+
 
 const float INVERSE_MAX_UINT = 1.0f / 4294967295.0f; 
 
@@ -43,8 +45,8 @@ void main()
 { 
 	vec3 P = position = Position + Velocity * deltaTime;
 	vec3 pos = (((P-(emitterPosition + fieldOffset))/(2*fieldScale)) + 0.5);
-	vec3 flowAcc = round(unsquish(texture(flowField, pos).xyz)*10)/10;
-	velocity = Velocity + (flowAcc + gravity) * deltaTime;
+	vec3 flowAcc = texture(flowField, pos).xyz;
+	velocity = Velocity * frictionCoefficient + (flowAcc + gravity) * deltaTime;
 	if(length(velocity) > length(terminalVel))
 	{
 		velocity = normalize(velocity) * terminalVel;

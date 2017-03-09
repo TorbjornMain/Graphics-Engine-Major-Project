@@ -24,7 +24,7 @@ public:
 
 protected:
 	const int	c_numShaders = 4;
-	const int	c_funcs = 3;
+	const int	c_funcs = 5;
 	glm::mat4	m_camTransform;
 	glm::mat4	m_viewMatrix;
 	glm::mat4	m_projectionMatrix;

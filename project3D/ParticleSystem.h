@@ -23,6 +23,7 @@ struct ParticleSystemData
 	glm::vec3 velocityMax;
 	float startSize;
 	float endSize;
+	float frictionCoefficient;
 
 	glm::vec3 gravity;
 
