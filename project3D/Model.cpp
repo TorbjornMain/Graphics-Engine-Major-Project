@@ -107,6 +107,12 @@ void Model::drawPostProcessQuad(uint shaderID, FrameBuffer buf)
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 }
 
+void Model::drawGenericScreenQuad()
+{
+	glBindVertexArray(m_glInfo[0].m_VAO);
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+}
+
 bool Model::load(const char * filename)
 {
 	m_model = new FBXFile();

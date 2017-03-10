@@ -129,14 +129,13 @@ bool Application3D::startup() {
 	m_scene.AddParticleSystem("GreenerFlare", glm::vec3(0, 0, 0), puShader.GetID(), pShader.GetID(), 50000);
 	m_scene.GetParticleSystem("GreenerFlare").getData().flowField = m_vfFuncs[0].getID();
 	m_scene.GetParticleSystem("GreenerFlare").getData().fieldScale = 20;
-	m_scene.GetParticleSystem("GreenerFlare").getData().velocityMax = vec3(0.3f);
 	m_scene.GetParticleSystem("GreenerFlare").getData().startColor = vec4(1, 0.8f, 0, 1.f);
 	m_scene.GetParticleSystem("GreenerFlare").getData().endColor = vec4(1, 0.8f, 0, 1.f);
 	m_scene.GetParticleSystem("GreenerFlare").getData().startSize = 0.1f;
 	m_scene.GetParticleSystem("GreenerFlare").getData().lifespanMax = 60;
 	m_scene.GetParticleSystem("GreenerFlare").loadTexture("Textures/heart.png");
 	m_scene.GetParticleSystem("GreenerFlare").initializeUniforms();
-	
+
 
 	return true;
 }
@@ -276,7 +275,6 @@ void Application3D::draw() {
 	c.projection = m_projectionMatrix;
 	c.view = m_viewMatrix;
 	c.transform = m_camTransform;
-	c.frustumCentreZ = (0.1f + 1000.f) / 2;
 	m_scene.setCamera(c);
 
 	if (m_postProcess)

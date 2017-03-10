@@ -99,7 +99,7 @@ void ParticleSystem::initializeUniforms()
 	glUniform1f(loc, m_data.fieldStrength);
 }
 
-void ParticleSystem::draw(float time, const glm::mat4 & camTransform, const glm::mat4 & projectionView, float camFrustumCentreZ)
+void ParticleSystem::draw(float time, const glm::mat4 & camTransform, const glm::mat4 & projectionView)
 {
 
 	initializeUniforms();

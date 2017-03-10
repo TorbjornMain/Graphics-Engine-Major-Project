@@ -49,7 +49,7 @@ public:
 	void initializeUniforms();
 
 
-	void draw(float time, const glm::mat4& camTransform, const glm::mat4& projectionView, float camFrustumCentreZ);
+	void draw(float time, const glm::mat4& camTransform, const glm::mat4& projectionView);
 
 	glm::vec3 getPos() { return m_position; }
 	void setPos(glm::vec3 newPos) { m_position = newPos; }

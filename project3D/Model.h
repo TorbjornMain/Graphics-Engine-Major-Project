@@ -29,6 +29,7 @@ public:
 	void update(float time);
 	void draw(uint shaderID, glm::mat4 camera, glm::vec4 camPos, float time, uint textureID, glm::mat4 transform);
 	void drawPostProcessQuad(uint shaderID, FrameBuffer buf);
+	void drawGenericScreenQuad();
 
 	bool load(const char* filename);
 	void generateScreenSpaceQuad();
