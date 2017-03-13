@@ -119,7 +119,8 @@ bool Application3D::startup() {
 	m_vfFuncs[3].init(ffSize, f);
 
 	f = [](glm::vec3 x) {
-		return -5*x;
+		return vec3((x/2).x + 0.5, (x / 2).y + 0.5, (x / 2).z + 0.5);
+		//return -5*x;
 	};
 
 	m_vfFuncs[4].init(ffSize, f);
@@ -136,6 +137,8 @@ bool Application3D::startup() {
 	m_scene.GetParticleSystem("GreenerFlare").loadTexture("Textures/heart.png");
 	m_scene.GetParticleSystem("GreenerFlare").initializeUniforms();
 
+
+	m_scene.AddVisualiser("flowbot", glm::mat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1), m_vfFuncs[4].getID(), m_vfFuncs[4].getShape());
 
 	return true;
 }
@@ -207,6 +210,9 @@ void Application3D::update(float deltaTime) {
 
 	//Particle Render Toggle
 	ImGui::Checkbox("Render Particles", &m_scene.b_renderParticles);
+
+	//Volume Render Toggle
+	ImGui::Checkbox("Render Volumes", &m_scene.b_renderVolumes);
 
 	//Gizmo Render Toggle
 	ImGui::Checkbox("Render Gizmos", &m_scene.b_renderGizmos);
@@ -285,7 +291,7 @@ void Application3D::draw() {
 	// wipe the screen to the background color
 	clearScreen();
 	if (!m_postProcess)
-		m_scene.draw(getTime());
+		m_scene.draw(getTime(), getWindowWidth(), getWindowHeight());
 	//Gizmos::draw(m_projectionMatrix * m_viewMatrix);
 	if (m_postProcess)
 		m_ppModel->drawPostProcessQuad(m_mainShader->GetID(), m_fb);

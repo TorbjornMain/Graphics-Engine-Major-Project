@@ -90,17 +90,17 @@ void Model::drawPostProcessQuad(uint shaderID, FrameBuffer buf)
 
 	uint pvw;
 
-	glActiveTexture(GL_TEXTURE1);
+	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, buf.getTex());
 
 	pvw = glGetUniformLocation(shaderID, "screen");
-	glUniform1i(pvw, 1);
+	glUniform1i(pvw, 0);
 
-	glActiveTexture(GL_TEXTURE0);
+	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, buf.getDep());
 	
 	pvw = glGetUniformLocation(shaderID, "depthBuffer");
-	glUniform1i(pvw, 0);
+	glUniform1i(pvw, 1);
 
 
 	glBindVertexArray(m_glInfo[0].m_VAO);
@@ -179,7 +179,7 @@ void Model::generateScreenSpaceQuad()
 
 							-1, -1, 0, 1, halfTexel.x, halfTexel.y,
 							1, -1, 0, 1, 1 - halfTexel.x, halfTexel.y,
-							1, 1, 0, 1, 1 - halfTexel.x, 1 - halfTexel.y, };
+							1, 1, 0, 1, 1 - halfTexel.x, 1 - halfTexel.y };
 	glGenVertexArrays(1, &m_glInfo[0].m_VAO);
 	glBindVertexArray(m_glInfo[0].m_VAO);
 	glGenBuffers(1, &m_glInfo[0].m_VBO);

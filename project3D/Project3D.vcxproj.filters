@@ -124,5 +124,14 @@
     <Text Include="..\bin\Shaders\PostProcessVert.txt">
       <Filter>Shaders</Filter>
     </Text>
+    <Text Include="..\bin\Shaders\BasicVertShaderStatic.txt">
+      <Filter>Shaders</Filter>
+    </Text>
+    <Text Include="..\bin\Shaders\PositionFrag.txt">
+      <Filter>Shaders</Filter>
+    </Text>
+    <Text Include="..\bin\Shaders\RaycastVolumeFrag.txt">
+      <Filter>Shaders</Filter>
+    </Text>
   </ItemGroup>
 </Project>

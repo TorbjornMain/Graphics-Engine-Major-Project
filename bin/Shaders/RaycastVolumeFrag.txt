@@ -1,0 +1,40 @@
+#version 410
+
+in vec2 uvs;
+
+uniform sampler2D back;
+uniform sampler2D front;
+uniform sampler3D field;
+uniform sampler2D depth;
+uniform int steps;
+
+out vec4 fragColor;
+
+
+vec3 unsquish(vec3 x)
+{
+	return (x+1)/2;
+}
+
+void main()
+{
+	
+	vec4 rayStart = texture(front, uvs);
+	if(rayStart.a < 0.1f)
+	{
+		discard;
+	}
+	vec4 rayEnd = texture(back, uvs);
+	vec4 step = vec4((rayEnd - rayStart).xyz, 1)/steps;
+	fragColor = vec4(0);
+	
+	for(int i = 0; i < steps; i++)
+	{
+		vec4 sampleCol = texture(field, (rayStart + step*i).xyz);
+		fragColor.a += sampleCol.a;
+		fragColor.xyz = mix(fragColor.xyz, sampleCol.xyz, sampleCol.a);
+		if(fragColor.a > 0.8f)
+			break;
+	}
+
+}

@@ -16,7 +16,6 @@ void FlowField::init(glm::vec3 shape, VectorFieldGeneratorFunc vfg)
 	m_shape = shape;
 
 	m_storage = new glm::vec3[(uint)shape.x * (uint)shape.y * (uint)shape.z];
-	float* floatStorage = new float[(uint)shape.x * (uint)shape.y * (uint)shape.z * 3];
 
 	for (int x = 0; x < (int)shape.x; x++)
 	{
@@ -26,9 +25,6 @@ void FlowField::init(glm::vec3 shape, VectorFieldGeneratorFunc vfg)
 			{
 				glm::vec3 v = ((2*(glm::vec3(x, y, z) / shape)) - 1.f);
 				m_storage[x + ((int)shape.x * (y + (z * (int)(shape.y))))] = vfg(v);
-				floatStorage[(3 * x) + ((int)shape.x * (y + (z * (int)(shape.y))))] = m_storage[x + ((int)shape.x * (y + (z * (int)(shape.y))))].x;
-				floatStorage[1+(3 * x) + ((int)shape.x * (y + (z * (int)(shape.y))))] = m_storage[x + ((int)shape.x * (y + (z * (int)(shape.y))))].y;
-				floatStorage[2+(3 * x) + ((int)shape.x * (y + (z * (int)(shape.y))))] = m_storage[x + ((int)shape.x * (y + (z * (int)(shape.y))))].z;
 			}
 		}
 	}
@@ -46,10 +42,4 @@ void FlowField::init(glm::vec3 shape, VectorFieldGeneratorFunc vfg)
 	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexImage3D(GL_TEXTURE_3D, 0, GL_RGB32F, (int)shape.x, (int)shape.y, (int)shape.z, 0, GL_RGB, GL_FLOAT, m_storage);
 	glBindTexture(GL_TEXTURE_3D, 0);
-	delete[] floatStorage;
-}
-
-glm::vec3 FlowField::squish(glm::vec3 x)
-{
-	return (x + glm::vec3(5, 5, 5))/10;
 }

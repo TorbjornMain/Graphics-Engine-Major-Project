@@ -18,9 +18,12 @@ void Scene::drawToRenderTarget(const Camera & renderCam, FrameBuffer & buf, floa
 	glClearColor(0.f, 0.f, 0.f, 1);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-	for (auto iter = m_volumetricFields.begin(); iter != m_volumetricFields.end(); iter++)
+	if (b_renderVolumes)
 	{
-		iter->second.draw(&renderCam);
+		for (auto iter = m_volumetricFields.begin(); iter != m_volumetricFields.end(); iter++)
+		{
+			iter->second.draw(&renderCam, buf.getBuf(), buf.getW(), buf.getH());
+		}
 	}
 
 	if (b_renderModels)
@@ -47,12 +50,14 @@ void Scene::drawToRenderTarget(const Camera & renderCam, FrameBuffer & buf, floa
 	glViewport(0, 0, screenWidth, screenHeight);
 }
 
-void Scene::draw(float time)
+void Scene::draw(float time, int screenWidth, int screenHeight)
 {
-
-	for (auto iter = m_volumetricFields.begin(); iter != m_volumetricFields.end(); iter++)
+	if (b_renderVolumes)
 	{
-		iter->second.draw(&m_camera);
+		for (auto iter = m_volumetricFields.begin(); iter != m_volumetricFields.end(); iter++)
+		{
+			iter->second.draw(&m_camera, 0, screenWidth, screenHeight);
+		}
 	}
 
 	if (b_renderModels)
@@ -104,10 +109,10 @@ void Scene::AddParticleSystem(char * name, glm::vec3 position, uint upShader, ui
 	m_particleSystems.insert(std::pair<char*, ParticleSystem>(name, p));
 }
 
-void Scene::AddVisualiser(char * name, glm::mat4 transform, uint shader, uint field, glm::vec3 fieldShape)
+void Scene::AddVisualiser(char * name, glm::mat4 transform, uint field, glm::vec3 fieldShape)
 {
 	FieldVisualiser v = FieldVisualiser();
-	v.init(shader, field, fieldShape, transform, 100);
+	v.init(field, fieldShape, transform, 100);
 	m_volumetricFields.insert(std::pair<char*, FieldVisualiser>(name, v));
 }
 

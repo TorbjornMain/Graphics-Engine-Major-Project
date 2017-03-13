@@ -1,0 +1,10 @@
+#version 410
+in vec3 pos;
+out vec4 fragColor;
+vec3 squish()
+{
+	return (pos + 1)/2;
+}
+void main() { 
+	fragColor = vec4(pos, 1);
+}

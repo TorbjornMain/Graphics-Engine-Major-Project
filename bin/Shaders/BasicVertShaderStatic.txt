@@ -1,0 +1,16 @@
+#version 410
+layout(location=0) in vec3 position;
+layout(location=1) in vec3 normal;
+layout(location=2) in vec2 uvs; 
+layout(location=3) in vec3 tangent;
+layout(location=4) in vec4 weight;
+layout(location=5) in vec4 index;
+
+uniform mat4 PVW;
+
+out vec3 pos;
+
+void main() {  
+	pos = position;
+	gl_Position = PVW * vec4(position, 1);
+}

@@ -22,11 +22,11 @@ public:
 	~Scene();
 
 	void drawToRenderTarget(const Camera& renderCam, FrameBuffer& buf, float time, int screenWidth, int screenHeight);
-	void draw(float time);
+	void draw(float time, int screenWidth, int screenHeight);
 	void AddInstance(char* name, Model* model, uint shader, uint texture, glm::mat4 transform);
 	void AddInstance(char* name, Model* model, uint shader, const char* textureFile, glm::mat4 transform);
 	void AddParticleSystem(char* name, glm::vec3 position, uint upShader, uint dShader, uint numParticles = 100000);
-	void AddVisualiser(char* name, glm::mat4 transform, uint shader, uint field, glm::vec3 fieldShape);
+	void AddVisualiser(char* name, glm::mat4 transform, uint field, glm::vec3 fieldShape);
 	ParticleSystem& GetParticleSystem(char* name);
 	Instance& GetInstance(char* name);
 	FieldVisualiser& GetVisualiser(char* name);
@@ -36,6 +36,7 @@ public:
 	bool b_renderParticles = true;
 	bool b_renderModels = true;
 	bool b_renderGizmos = false;
+	bool b_renderVolumes = true;
 
 private:
 	std::map<char* , Instance> m_instances;
