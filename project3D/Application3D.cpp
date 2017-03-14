@@ -10,6 +10,7 @@
 #include <imgui.h>
 #include <Texture.h>
 #include <iostream>
+#include "FluidSimulation.h"
 
 
 using glm::vec3;
@@ -137,8 +138,10 @@ bool Application3D::startup() {
 	m_scene.GetParticleSystem("GreenerFlare").loadTexture("Textures/heart.png");
 	m_scene.GetParticleSystem("GreenerFlare").initializeUniforms();
 
+	FluidSimulation fl = FluidSimulation();
+	fl.init(vec3(100));
 
-	m_scene.AddVisualiser("flowbot", glm::mat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1), m_vfFuncs[4].getID(), m_vfFuncs[4].getShape());
+	m_scene.AddVisualiser("flowbot", glm::mat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 5, 0, 0, 1), fl.getFluid(), vec3(100, 100, 100));
 
 	return true;
 }

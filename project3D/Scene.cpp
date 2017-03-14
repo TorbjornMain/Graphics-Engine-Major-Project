@@ -18,14 +18,6 @@ void Scene::drawToRenderTarget(const Camera & renderCam, FrameBuffer & buf, floa
 	glClearColor(0.f, 0.f, 0.f, 1);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-	if (b_renderVolumes)
-	{
-		for (auto iter = m_volumetricFields.begin(); iter != m_volumetricFields.end(); iter++)
-		{
-			iter->second.draw(&renderCam, buf.getBuf(), buf.getW(), buf.getH());
-		}
-	}
-
 	if (b_renderModels)
 	{
 		for (auto iter = m_instances.begin(); iter != m_instances.end(); iter++)
@@ -40,6 +32,13 @@ void Scene::drawToRenderTarget(const Camera & renderCam, FrameBuffer & buf, floa
 			iter->second.draw(time, renderCam.transform, renderCam.projection * renderCam.view);
 		}
 	}
+	if (b_renderVolumes)
+	{
+		for (auto iter = m_volumetricFields.begin(); iter != m_volumetricFields.end(); iter++)
+		{
+			iter->second.draw(&renderCam, buf.getBuf(), buf.getW(), buf.getH());
+		}
+	}
 	if (b_renderGizmos)
 	{
 		aie::Gizmos::draw(m_camera.projection * m_camera.view);
@@ -52,14 +51,6 @@ void Scene::drawToRenderTarget(const Camera & renderCam, FrameBuffer & buf, floa
 
 void Scene::draw(float time, int screenWidth, int screenHeight)
 {
-	if (b_renderVolumes)
-	{
-		for (auto iter = m_volumetricFields.begin(); iter != m_volumetricFields.end(); iter++)
-		{
-			iter->second.draw(&m_camera, 0, screenWidth, screenHeight);
-		}
-	}
-
 	if (b_renderModels)
 	{
 		for (auto iter = m_instances.begin(); iter != m_instances.end(); iter++)
@@ -74,10 +65,18 @@ void Scene::draw(float time, int screenWidth, int screenHeight)
 			iter->second.draw(time, m_camera.transform, m_camera.projection * m_camera.view);
 		}
 	}
+	if (b_renderVolumes)
+	{
+		for (auto iter = m_volumetricFields.begin(); iter != m_volumetricFields.end(); iter++)
+		{
+			iter->second.draw(&m_camera, 0, screenWidth, screenHeight);
+		}
+	}
 	if (b_renderGizmos)
 	{
 		aie::Gizmos::draw(m_camera.projection * m_camera.view);
 	}
+
 
 }
 

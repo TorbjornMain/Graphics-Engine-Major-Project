@@ -97,6 +97,7 @@
     <ClCompile Include="FlowField.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Disabled</Optimization>
     </ClCompile>
+    <ClCompile Include="FluidSimulation.cpp" />
     <ClCompile Include="FrameBuffer.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Model.cpp" />
@@ -110,6 +111,7 @@
     <ClInclude Include="Application3D.h" />
     <ClInclude Include="FieldVisualiser.h" />
     <ClInclude Include="FlowField.h" />
+    <ClInclude Include="FluidSimulation.h" />
     <ClInclude Include="FrameBuffer.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="ParticleSystem.h" />
