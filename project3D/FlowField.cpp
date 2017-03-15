@@ -17,6 +17,8 @@ void FlowField::init(glm::vec3 shape, VectorFieldGeneratorFunc vfg)
 
 	m_storage = new glm::vec3[(uint)shape.x * (uint)shape.y * (uint)shape.z];
 
+
+	//Generates Texture pixels
 	for (int x = 0; x < (int)shape.x; x++)
 	{
 		for (int y = 0; y < (int)shape.y; y++)
@@ -30,7 +32,7 @@ void FlowField::init(glm::vec3 shape, VectorFieldGeneratorFunc vfg)
 	}
 
 	
-
+	//Generates Texture Buffer
 	glGenTextures(1, &m_id);
 	glBindTexture(GL_TEXTURE_3D, m_id);
 	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_BORDER);

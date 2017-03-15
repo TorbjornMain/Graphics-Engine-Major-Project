@@ -6,6 +6,7 @@ uniform sampler2D back;
 uniform sampler2D front;
 uniform sampler3D field;
 uniform sampler2D depth;
+uniform float maxDim;
 uniform int steps;
 
 out vec4 fragColor;
@@ -32,10 +33,14 @@ void main()
 	for(int i = 0; i < steps; i++)
 	{
 		vec4 sampleCol = texture(field, (rayStart + step*i).xyz);
-		fragColor.a += sampleCol.a;
+		fragColor.a += sampleCol.a * maxDim/steps;
 		fragColor.xyz = mix(fragColor.xyz, sampleCol.xyz, sampleCol.a);
 		if(fragColor.a > 1.f)
 			break;
 	}
+	
+	if(fragColor.a < 0.1f)
+		discard;
 
+	gl_FragDepth = texture(depth,uvs).x;
 }

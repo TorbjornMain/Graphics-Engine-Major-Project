@@ -41,5 +41,5 @@ protected:
 	FrameBuffer m_fb;
 	Scene		m_scene;
 	bool		m_postProcess = true;
-	float m_lMX, m_lMY, m_FOV, m_LSCRL;
+	float m_lMX, m_lMY, m_FOV;
 };

@@ -18,6 +18,8 @@ void Scene::drawToRenderTarget(const Camera & renderCam, FrameBuffer & buf, floa
 	glClearColor(0.f, 0.f, 0.f, 1);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
+
+	//render models (guaranteed opaque) -> particles (hard to see through, even if translucent) -> volumes (easy to see through when translucent)
 	if (b_renderModels)
 	{
 		for (auto iter = m_instances.begin(); iter != m_instances.end(); iter++)
@@ -51,6 +53,7 @@ void Scene::drawToRenderTarget(const Camera & renderCam, FrameBuffer & buf, floa
 
 void Scene::draw(float time, int screenWidth, int screenHeight)
 {
+	//render models (guaranteed opaque) -> particles (hard to see through, even if translucent) -> volumes (easy to see through when translucent)
 	if (b_renderModels)
 	{
 		for (auto iter = m_instances.begin(); iter != m_instances.end(); iter++)

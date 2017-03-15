@@ -24,6 +24,8 @@ void Shader::CompileShaders(const char * vert, const char * frag, const char* ge
 	m_id = glCreateProgram();
 	glAttachShader(m_id, vertShader);
 	glAttachShader(m_id, fragShader);
+
+	//check if geometry shader exists
 	if (geom != nullptr)
 	{
 		geomShader = glCreateShader(GL_GEOMETRY_SHADER);
@@ -32,6 +34,7 @@ void Shader::CompileShaders(const char * vert, const char * frag, const char* ge
 	}
 	glLinkProgram(m_id);
 
+	//Error checking
 	glGetProgramiv(m_id, GL_LINK_STATUS, &success);
 	if (success == GL_FALSE)
 	{
@@ -61,6 +64,7 @@ void Shader::CompileUpdateShader(const char * vert, const char ** varyings, uint
 	glTransformFeedbackVaryings(m_id, numVaryings, varyings, GL_INTERLEAVED_ATTRIBS);
 	glLinkProgram(m_id);
 	
+	//Error Check
 	glGetProgramiv(m_id, GL_LINK_STATUS, &success);
 	if (success == GL_FALSE)
 	{

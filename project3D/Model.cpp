@@ -29,6 +29,7 @@ Model::~Model()
 
 void Model::update(float time)
 {
+	//Update animation frames
 	if (m_isAnimated)
 	{
 		FBXSkeleton* skeleton = m_model->getSkeletonByIndex(0);
@@ -77,6 +78,7 @@ void Model::draw(uint shaderID, glm::mat4 camera, glm::vec4 camPos, float time, 
 
 	for (auto& gl : m_glInfo) {
 		glBindVertexArray(gl.m_VAO);
+		//if model has index buffer, use indices, otherwise use vertices
 		if (gl.m_IBO == -1)
 			glDrawArrays(GL_TRIANGLES, 0, gl.m_faceCount);
 		else
@@ -113,10 +115,17 @@ void Model::drawGenericScreenQuad()
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 }
 
+void Model::drawInstancedGenericScreenQuad(uint numSlices)
+{
+	glBindVertexArray(m_glInfo[0].m_VAO);
+	glDrawArraysInstanced(GL_TRIANGLES, 0, numSlices, 6);
+}
+
 bool Model::load(const char * filename)
 {
 	m_model = new FBXFile();
 	bool ret = m_model->load(filename);
+	//Error checking
  	if (ret)
 	{
 		m_isAnimated = m_model->getSkeletonCount() > 0;
@@ -216,6 +225,7 @@ void Instance::loadTex(const char * filename)
 	t.load(filename);
 	glGenTextures(1, &m_texture);
 	glBindTexture(GL_TEXTURE_2D, m_texture);
+	//Find image format and apply to texture
 	uint format = 0;
 	switch (t.getFormat())
 	{
@@ -245,7 +255,7 @@ void Instance::draw(glm::mat4 camera, glm::mat4 camTransform, float time, float 
 
 	aie::Gizmos::addSphere(glm::vec3(centre), radius, 5, 5, glm::vec4(0));
 
-
+	//Frustum cull
 	glm::vec4 planes[6];
 	planes[0] = glm::vec4(camera[0][3] - camera[0][0], camera[1][3] - camera[1][0], camera[2][3] - camera[2][0], camera[3][3] - camera[3][0]);
 	planes[1] = glm::vec4(camera[0][3] + camera[0][0], camera[1][3] + camera[1][0], camera[2][3] + camera[2][0], camera[3][3] + camera[3][0]);

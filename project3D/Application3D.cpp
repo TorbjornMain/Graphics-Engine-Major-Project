@@ -28,11 +28,8 @@ Application3D::~Application3D() {
 
 bool Application3D::startup() {
 
-	system("cd");
-
 	m_scene = Scene();
 	setBackgroundColour(0.25f, 0.25f, 0.25f);
-	m_LSCRL = 0;
 	m_FOV = glm::half_pi<float>();
 
 	m_fb = FrameBuffer(1280, 720);
@@ -59,7 +56,6 @@ bool Application3D::startup() {
 	m_mainShader->CompileShaders("Shaders/BasicVertShader.txt", "Shaders/PBRFragShader.txt");
 	m_testModel = new Model();
 	std::cout << "Loading Models" << std::endl;
-	//m_testModel->loadFromOBJ("C:/Users/s171558/Documents/Graphics-Engine-Major-Project/Meshes/Bunny.obj");
 	m_testModel->load("Meshes/mecanimloco.fbx");
 	m_testModel->setUpperBound(glm::vec4(0.05, 0.1, 0.05, 1));
 	m_testModel->setLowerBound(glm::vec4(-0.05, 0, -0.05, 1));
@@ -72,6 +68,8 @@ bool Application3D::startup() {
 		st = st + st;
 		m_scene.AddInstance(const_cast<char*>(st.c_str()), m_testModel, m_mainShader->GetID(), "Textures/woodtex.jpg", glm::translate(glm::vec3((rand() / (float)INT16_MAX) - 0.5f, (rand() / (float)INT16_MAX) - 0.5f, (rand() / (float)INT16_MAX) - 0.5f) * 20) * glm::scale(glm::vec3(10.f)));
 	}
+
+	//Set up most shaders
 	std::cout << "Compiling Shaders" << std::endl;
 	m_ppShaders = new Shader[c_numShaders];
 	m_ppShaders[0].CompileShaders("Shaders/PostProcessVert.txt", "Shaders/BloomFrag.txt");
@@ -88,6 +86,9 @@ bool Application3D::startup() {
 	pShader.CompileShaders("Shaders/BasicParticleVert.txt", "Shaders/BasicParticleFrag.txt", "Shaders/BasicParticleBillboardGeom.txt");
 	const char* varyings[] = { "position", "velocity", "lifetime", "lifespan" };
 	puShader.CompileUpdateShader("Shaders/BasicParticleUpdate.txt", varyings, 4);
+	
+	
+	//Generate Vector Fields
 	std::cout << "Creating Vector Fields" << std::endl;
 	m_vfFuncs = new FlowField[c_funcs];
 	vec3 ffSize = vec3(128);
@@ -121,13 +122,13 @@ bool Application3D::startup() {
 
 	f = [](glm::vec3 x) {
 		return vec3((x/2).x + 0.5, (x / 2).y + 0.5, (x / 2).z + 0.5);
-		//return -5*x;
 	};
 
 	m_vfFuncs[4].init(ffSize, f);
 
+
+	//Set up particle System and volume renderer
 	std::cout << "Final Setup" << std::endl;
-	//m_scene.AddParticleSystem("Bandaid", glm::vec3(0, 0, 0), puShader.GetID(), pShader.GetID(), 0);
 	m_scene.AddParticleSystem("GreenerFlare", glm::vec3(0, 0, 0), puShader.GetID(), pShader.GetID(), 50000);
 	m_scene.GetParticleSystem("GreenerFlare").getData().flowField = m_vfFuncs[0].getID();
 	m_scene.GetParticleSystem("GreenerFlare").getData().fieldScale = 20;
@@ -257,10 +258,12 @@ void Application3D::update(float deltaTime) {
 
 	//Gravity
 	ImGui::InputFloat3("Gravity", &(m_scene.GetParticleSystem("GreenerFlare").getData().gravity.x));
-
+	//Friction
 	ImGui::SliderFloat("Friction Coefficient", &(m_scene.GetParticleSystem("GreenerFlare").getData().frictionCoefficient), 0, 1);
 
 	ImGui::End();
+
+	//Resize framebuffer if window resized
 	if (m_previousWindowHeight + m_previousWindowWidth != getWindowWidth() + getWindowHeight())
 	{
 		m_fb.setW(getWindowWidth());
@@ -268,7 +271,6 @@ void Application3D::update(float deltaTime) {
 		m_fb.RegenBuffer();
 	}
 
-	m_LSCRL = (float)input->getMouseScroll();
 	if (input->isKeyDown(aie::INPUT_KEY_ESCAPE))
 		quit();
 }
@@ -295,7 +297,8 @@ void Application3D::draw() {
 	clearScreen();
 	if (!m_postProcess)
 		m_scene.draw(getTime(), getWindowWidth(), getWindowHeight());
-	//Gizmos::draw(m_projectionMatrix * m_viewMatrix);
+
+
 	if (m_postProcess)
 		m_ppModel->drawPostProcessQuad(m_mainShader->GetID(), m_fb);
 }

@@ -28,7 +28,7 @@ void FrameBuffer::GenBuffer()
 	glGenTextures(1, &m_dep);
 	glBindTexture(GL_TEXTURE_2D, m_tex);
 
-
+	//Generate Colour Buffer
 	glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, m_w, m_h);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -36,6 +36,8 @@ void FrameBuffer::GenBuffer()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, m_tex, 0);
 	
+
+	//Generate Depth Buffer
 	glBindTexture(GL_TEXTURE_2D, m_dep);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, m_w, m_h, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -55,6 +57,7 @@ void FrameBuffer::GenBuffer()
 
 void FrameBuffer::RegenBuffer()
 {
+	//Clear and Regenerate buffer
 	glDeleteFramebuffers(1, &m_buf);
 	glDeleteTextures(1, &m_tex);
 	glDeleteTextures(1, &m_dep);

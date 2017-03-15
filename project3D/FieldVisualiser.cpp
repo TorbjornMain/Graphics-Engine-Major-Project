@@ -23,7 +23,7 @@ void FieldVisualiser::init(uint field, glm::vec3 fieldShape, glm::mat4 fieldTran
 	m_frontFace.GenBuffer();
 	m_field = field;
 	m_fieldShape = fieldShape;
-	m_fieldTransform = fieldTransform;// *glm::scale(m_fieldShape);
+	m_fieldTransform = fieldTransform;
 	m_scanResolution = scanRes;
 
 	m_preProcess = Shader();
@@ -35,12 +35,15 @@ void FieldVisualiser::init(uint field, glm::vec3 fieldShape, glm::mat4 fieldTran
 
 void FieldVisualiser::draw(const Camera * c, uint m_buffer, int width, int height)
 {
+	//Draw front face positions
 	glBindFramebuffer(GL_FRAMEBUFFER, m_frontFace.getBuf());
 	glViewport(0, 0, m_frontFace.getW(), m_frontFace.getH());
 	glClearColor(0.f, 0.f, 0.f, 0.f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	m_model.draw(m_preProcess.GetID(), c->projection * c->view, glm::vec4(0), 0, 0, m_fieldTransform);
 
+
+	//Draw back face positions
 	glBindFramebuffer(GL_FRAMEBUFFER, m_backFace.getBuf());
 	glViewport(0, 0, m_backFace.getW(), m_backFace.getH());
 	glClearColor(0.f, 0.f, 0.f, 0.f);
@@ -49,9 +52,11 @@ void FieldVisualiser::draw(const Camera * c, uint m_buffer, int width, int heigh
 	m_model.draw(m_preProcess.GetID(), c->projection * c->view, glm::vec4(0), 0, 0, m_fieldTransform);
 	glCullFace(GL_BACK);
 
+	//Rebind main buffer
 	glBindFramebuffer(GL_FRAMEBUFFER, m_buffer);
 	glViewport(0, 0, width, height);
 	
+	//Draw screen space quad with custom depth buffer
 	glUseProgram(m_postProcess.GetID());
 
 	glActiveTexture(GL_TEXTURE0);
@@ -73,6 +78,10 @@ void FieldVisualiser::draw(const Camera * c, uint m_buffer, int width, int heigh
 	glActiveTexture(GL_TEXTURE3);
 	glBindTexture(GL_TEXTURE_2D, m_frontFace.getDep());
 	loc = glGetUniformLocation(m_postProcess.GetID(), "depth");
+	glUniform1i(loc, 3);
+
+	loc = glGetUniformLocation(m_postProcess.GetID(), "maxDim");
+	glUniform1f(loc, glm::compMax(m_fieldShape));
 
 	loc = glGetUniformLocation(m_postProcess.GetID(), "steps");
 	glUniform1i(loc, m_scanResolution);

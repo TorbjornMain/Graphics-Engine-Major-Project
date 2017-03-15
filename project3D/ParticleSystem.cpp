@@ -104,6 +104,8 @@ void ParticleSystem::draw(float time, const glm::mat4 & camTransform, const glm:
 
 	initializeUniforms();
 
+
+	//Frustum cull
 	glm::vec4 planes[6];
 	planes[0] = glm::vec4(projectionView[0][3] - projectionView[0][0], projectionView[1][3] - projectionView[1][0], projectionView[2][3] - projectionView[2][0], projectionView[3][3] - projectionView[3][0]);
 	planes[1] = glm::vec4(projectionView[0][3] + projectionView[0][0], projectionView[1][3] + projectionView[1][0], projectionView[2][3] + projectionView[2][0], projectionView[3][3] + projectionView[3][0]);
@@ -129,6 +131,7 @@ void ParticleSystem::draw(float time, const glm::mat4 & camTransform, const glm:
 	int loc;
 	uint otherBuf = (m_activeBuffer + 1) % 2;
 
+	//Update
 	glUseProgram(m_updateShader);
 
 	glActiveTexture(GL_TEXTURE0);
@@ -142,8 +145,6 @@ void ParticleSystem::draw(float time, const glm::mat4 & camTransform, const glm:
 
 	loc = glGetUniformLocation(m_updateShader, "flowField");
 	glUniform1i(loc, 0);
-
-
 
 	float deltaTime = time - m_lastDrawTime; m_lastDrawTime = time;
 
@@ -167,6 +168,8 @@ void ParticleSystem::draw(float time, const glm::mat4 & camTransform, const glm:
 	glDisable(GL_RASTERIZER_DISCARD);
 	glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, 0);
 
+
+	//Draw if in frustum
 	if (render == true)
 	{
 		glUseProgram(m_drawShader);
@@ -192,6 +195,7 @@ void ParticleSystem::loadTexture(const char * filename)
 	glGenTextures(1, &(m_data.texture));
 	glBindTexture(GL_TEXTURE_2D, m_data.texture);
 	uint format = 0;
+	//Find format and apply to texture
 	switch (t.getFormat())
 	{
 	case(aie::Texture::Format::RED):

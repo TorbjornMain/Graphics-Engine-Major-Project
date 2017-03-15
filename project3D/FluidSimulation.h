@@ -3,6 +3,8 @@
 #include <glm/ext.hpp>
 #include "typedefs.h"
 
+
+//Not actually a fluid simulation :D
 class FluidSimulation
 {
 public:
@@ -15,6 +17,6 @@ public:
 
 private:
 	glm::vec3 m_shape;
-	uint m_fluid, m_velocity;
+	uint m_fluid;
 };
 

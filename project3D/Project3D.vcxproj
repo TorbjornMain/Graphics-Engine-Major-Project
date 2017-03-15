@@ -99,6 +99,7 @@
     </ClCompile>
     <ClCompile Include="FluidSimulation.cpp" />
     <ClCompile Include="FrameBuffer.cpp" />
+    <ClCompile Include="Framebuffer3D.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="ParticleSystem.cpp">
@@ -113,6 +114,7 @@
     <ClInclude Include="FlowField.h" />
     <ClInclude Include="FluidSimulation.h" />
     <ClInclude Include="FrameBuffer.h" />
+    <ClInclude Include="Framebuffer3D.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="ParticleSystem.h" />
     <ClInclude Include="Scene.h" />
