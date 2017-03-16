@@ -2,6 +2,7 @@
 #include "typedefs.h"
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
+#include "Model.h"
 
 class Framebuffer3D
 {
@@ -15,8 +16,11 @@ public:
 	uint getTex() { return m_tex; }
 	uint getBuf() { return m_buf; }
 	glm::ivec3 getShape() { return m_shape; }
+	void draw(uint shader, uint buf, uint w, uint h);
 private:
 	glm::ivec3 m_shape;
+
+	Model m_model;
 
 	uint m_tex = 0;
 	uint m_buf = 0;

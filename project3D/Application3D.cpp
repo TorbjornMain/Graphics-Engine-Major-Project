@@ -81,6 +81,9 @@ bool Application3D::startup() {
 	m_ppModel = new Model();
 	m_ppModel->generateScreenSpaceQuad();
 
+	m_fluidShader = new Shader();
+	m_fluidShader->CompileShaders("Shaders/PostProcessVert.txt", "Shaders/BasicVolumetricTestFrag.txt");
+
 	Shader pShader = Shader();
 	Shader puShader = Shader();
 	pShader.CompileShaders("Shaders/BasicParticleVert.txt", "Shaders/BasicParticleFrag.txt", "Shaders/BasicParticleBillboardGeom.txt");
@@ -139,10 +142,14 @@ bool Application3D::startup() {
 	m_scene.GetParticleSystem("GreenerFlare").loadTexture("Textures/heart.png");
 	m_scene.GetParticleSystem("GreenerFlare").initializeUniforms();
 
-	FluidSimulation fl = FluidSimulation();
-	fl.init(vec3(100));
+	m_fluidBuf = Framebuffer3D(glm::ivec3(100, 100, 100));
+	m_fluidBuf.GenBuffer();
 
-	m_scene.AddVisualiser("flowbot", glm::mat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 5, 0, 0, 1), fl.getFluid(), vec3(100, 100, 100));
+	FluidSimulation fl = FluidSimulation();
+	fl.init(glm::ivec3(100, 100, 100));
+
+
+	m_scene.AddVisualiser("flowbot", glm::mat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 5, 0, 0, 1), fl.getFluid(), m_fluidBuf.getShape());
 
 	return true;
 }
@@ -287,6 +294,8 @@ void Application3D::draw() {
 	c.view = m_viewMatrix;
 	c.transform = m_camTransform;
 	m_scene.setCamera(c);
+
+	m_fluidBuf.draw(m_fluidShader->GetID(), 0, getWindowWidth(), getWindowHeight());
 
 	if (m_postProcess)
 	{

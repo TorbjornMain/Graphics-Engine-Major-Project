@@ -1,0 +1,14 @@
+#version 450
+
+in vec2 uvs;
+flat in int slice;
+
+out vec4 fragColor;
+
+uniform int slices;
+
+void main()
+{
+	fragColor = vec4(slice, 0, 0, 1);
+	//fragColor = vec4(1,0,0,1);
+}

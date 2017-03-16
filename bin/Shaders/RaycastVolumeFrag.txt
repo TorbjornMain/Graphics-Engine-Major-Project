@@ -39,6 +39,7 @@ void main()
 			break;
 	}
 	
+
 	if(fragColor.a < 0.1f)
 		discard;
 

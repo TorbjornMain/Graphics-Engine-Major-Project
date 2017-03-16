@@ -15,12 +15,14 @@ Framebuffer3D::~Framebuffer3D()
 
 void Framebuffer3D::GenBuffer()
 {
+	m_model = Model();
+	m_model.generateScreenSpaceQuad();
 	glGenFramebuffers(1, &m_buf);
 	glBindFramebuffer(GL_FRAMEBUFFER, m_buf);
 	
 	glGenTextures(1, &m_tex);
 	glBindTexture(GL_TEXTURE_3D, m_tex);
-	glTexStorage3D(GL_TEXTURE_3D, 1, GL_RGBA32F, m_shape.x, m_shape.y, m_shape.z);
+	glTexImage3D(GL_TEXTURE_3D, 0, GL_RGBA8, m_shape.x, m_shape.y, m_shape.z, 0, GL_RGBA, GL_FLOAT, 0);
 	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -33,5 +35,18 @@ void Framebuffer3D::GenBuffer()
 
 	GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 	if (status != GL_FRAMEBUFFER_COMPLETE)
-		std::cout << "RIP, Framebuffer Error" << std::endl;
+		std::cout << "RIP, Framebuffer Error" << glGetError() << std::endl;
+	
+}
+
+void Framebuffer3D::draw(uint shader, uint buf, uint w, uint h)
+{
+	glBindFramebuffer(GL_FRAMEBUFFER, m_buf);
+	glViewport(0, 0, m_shape.x, m_shape.y);
+	glUseProgram(shader);
+	int loc = glGetUniformLocation(shader, "slices");
+	glUniform1i(loc, m_shape.z);
+	m_model.drawGenericScreenQuad();
+	glBindFramebuffer(GL_FRAMEBUFFER, buf);
+	glViewport(0, 0, w, h);
 }

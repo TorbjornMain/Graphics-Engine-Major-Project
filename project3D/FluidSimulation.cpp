@@ -27,7 +27,7 @@ void FluidSimulation::init(glm::vec3 shape)
 			{
 				glm::vec3 v = ((2 * (glm::vec3(x, y, z) / shape)) - 1.f);
 				float vl = glm::length(v);
-				fluStor[x + ((int)shape.x * (y + (z * (int)(shape.y))))] = (vl < 1.f) ? glm::vec4(vl, 1-vl, 0, 1) : glm::vec4(0,0,0,0);
+				fluStor[x + ((int)shape.x * (y + (z * (int)(shape.y))))] = (vl < 1.f) ? glm::vec4(vl, 1-vl, 0, 0.01) : glm::vec4(0,0,0,0);
 			}
 		}
 	}

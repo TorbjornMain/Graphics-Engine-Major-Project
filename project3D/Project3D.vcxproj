@@ -132,6 +132,7 @@
     <Text Include="..\bin\Shaders\BasicParticleVert.txt" />
     <Text Include="..\bin\Shaders\BasicVertShader.txt" />
     <Text Include="..\bin\Shaders\BasicVertShaderStatic.txt" />
+    <Text Include="..\bin\Shaders\BasicVolumetricTestFrag.txt" />
     <Text Include="..\bin\Shaders\BloomFrag.txt" />
     <Text Include="..\bin\Shaders\BoxBlurFrag.txt" />
     <Text Include="..\bin\Shaders\DepthFogFrag.txt" />
@@ -140,7 +141,9 @@
     <Text Include="..\bin\Shaders\PBRFragShaderNoUV.txt" />
     <Text Include="..\bin\Shaders\PositionFrag.txt" />
     <Text Include="..\bin\Shaders\PostProcessVert.txt" />
+    <Text Include="..\bin\Shaders\PostProcessVert3D.txt" />
     <Text Include="..\bin\Shaders\RaycastVolumeFrag.txt" />
+    <Text Include="..\bin\Shaders\TestVolumectricGeom.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

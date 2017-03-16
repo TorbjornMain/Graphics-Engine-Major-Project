@@ -145,5 +145,14 @@
     <Text Include="..\bin\Shaders\RaycastVolumeFrag.txt">
       <Filter>Shaders</Filter>
     </Text>
+    <Text Include="..\bin\Shaders\BasicVolumetricTestFrag.txt">
+      <Filter>Shaders</Filter>
+    </Text>
+    <Text Include="..\bin\Shaders\PostProcessVert3D.txt">
+      <Filter>Shaders</Filter>
+    </Text>
+    <Text Include="..\bin\Shaders\TestVolumectricGeom.txt">
+      <Filter>Shaders</Filter>
+    </Text>
   </ItemGroup>
 </Project>
