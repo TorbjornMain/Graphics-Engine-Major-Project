@@ -1,0 +1,25 @@
+#version 410
+
+layout(triangles) in;
+layout(triangle_strip, max_vertices = 3) out;
+flat in int instance[3];
+
+
+
+out vec4 pos;
+flat out int slice;
+
+void main()
+{
+
+		
+		for(int j = 0; j < gl_in.length(); j++)
+		{
+			gl_Layer = instance[j];
+			slice = instance[j];
+			pos = gl_in[j].gl_Position;
+			gl_Position = gl_in[j].gl_Position;
+			EmitVertex();
+		}
+		EndPrimitive();
+}

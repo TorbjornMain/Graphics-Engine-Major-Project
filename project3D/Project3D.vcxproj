@@ -143,7 +143,7 @@
     <Text Include="..\bin\Shaders\PostProcessVert.txt" />
     <Text Include="..\bin\Shaders\PostProcessVert3D.txt" />
     <Text Include="..\bin\Shaders\RaycastVolumeFrag.txt" />
-    <Text Include="..\bin\Shaders\TestVolumectricGeom.txt" />
+    <Text Include="..\bin\Shaders\TestVolumetricGeom.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -118,7 +118,7 @@ void Model::drawGenericScreenQuad()
 void Model::drawInstancedGenericScreenQuad(uint numSlices)
 {
 	glBindVertexArray(m_glInfo[0].m_VAO);
-	glDrawArraysInstanced(GL_TRIANGLES, 0, numSlices, 6);
+	glDrawArraysInstanced(GL_TRIANGLES, 0, 6, numSlices);
 }
 
 bool Model::load(const char * filename)

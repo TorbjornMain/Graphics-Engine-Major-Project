@@ -16,7 +16,7 @@ public:
 	uint getTex() { return m_tex; }
 	uint getBuf() { return m_buf; }
 	glm::ivec3 getShape() { return m_shape; }
-	void draw(uint shader, uint buf, uint w, uint h);
+	void draw(uint shader, uint buf, uint w, uint h, float time);
 private:
 	glm::ivec3 m_shape;
 

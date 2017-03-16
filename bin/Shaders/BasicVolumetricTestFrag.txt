@@ -1,14 +1,38 @@
 #version 450
 
 in vec2 uvs;
+in vec4 pos;
 flat in int slice;
 
-out vec4 fragColor;
-
 uniform int slices;
+uniform float time;
+
+out vec4 fragColor;
+const float INVERSE_MAX_UINT = 1.0f / 4294967295.0f; 
+float rand(uint seed, float range) 
+{ 
+	uint i = (seed ^ 12345391u) * 2654435769u; 
+	i ^= (i << 6u) ^ (i >> 26u);
+	i *= 2654435769u;
+	i += (i << 5u) ^ (i >> 12u);
+	return float(range * i) * INVERSE_MAX_UINT;
+}
 
 void main()
 {
-	fragColor = vec4(slice, 0, 0, 1);
-	//fragColor = vec4(1,0,0,1);
+	vec3 frg = pos.xyz;
+	frg.z = (float(slice)/(0.5*slices)) - 1;
+	//float f = abs(sin(5*(frg.x + time))/2 - frg.y) + abs(sin(3*(frg.x + time))/2 - frg.z);
+	float f = abs(sin(5*(frg.x + time))/2 - frg.y) + (sin(3*(frg.x + time))/2 - frg.z);
+	float t = time * 10;
+	if(f < 0.2*frg.x && f > -0.2*frg.x)
+	{
+		fragColor.r = rand(int(++t), 1);
+		fragColor.g = rand(int(++t), 1);
+		fragColor.b = rand(int(++t), 1);
+		fragColor.a = 1;
+	}
+	else
+		discard;
+	
 }
