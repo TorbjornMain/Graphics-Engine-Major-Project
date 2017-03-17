@@ -54,7 +54,7 @@ void FluidSimulation::update(uint buf, uint w, uint h, float time)
 	m_vel.draw(m_vUpdateShader, buf, w, h, time);
 	
 	m_fluid.initDraw(m_fUpdateShader);
-	int loc = glGetUniformLocation(m_vUpdateShader, "tField");
+	loc = glGetUniformLocation(m_vUpdateShader, "tField");
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_3D, m_fluid.getTex());
 	glUniform1i(loc, 0);
