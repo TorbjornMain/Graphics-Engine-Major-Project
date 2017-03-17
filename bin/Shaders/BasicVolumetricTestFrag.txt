@@ -22,17 +22,16 @@ void main()
 {
 	vec3 frg = pos.xyz;
 	frg.z = (float(slice)/(0.5*slices)) - 1;
-	//float f = abs(sin(5*(frg.x + time))/2 - frg.y) + abs(sin(3*(frg.x + time))/2 - frg.z);
-	float f = abs(sin(5*(frg.x + time))/2 - frg.y) + (sin(3*(frg.x + time))/2 - frg.z);
+	float f = (sin(5*(frg.x + time))/2 - frg.y) * (sin(5*(frg.x + time))/2 - frg.y)  + (sin(3*(frg.x + time))/2 - frg.z)*(sin(3*(frg.x + time))/2 - frg.z);
+	f = sqrt(f)*(1+frg.x);
+	//float f = abs(sin(5*(frg.x + time))/2 - frg.y) + (sin(3*(frg.x + time))/2 - frg.z);
 	float t = time * 10;
-	if(f < 0.2*frg.x && f > -0.2*frg.x)
-	{
-		fragColor.r = rand(int(++t), 1);
-		fragColor.g = rand(int(++t), 1);
-		fragColor.b = rand(int(++t), 1);
-		fragColor.a = 1;
-	}
-	else
+	float interp = (-25*f*f) + (0*f) + 1; 
+
+	fragColor.r = interp * 0.2;//rand(int(++t), 1);
+	fragColor.g = interp * 0.5;//rand(int(++t), 1);
+	fragColor.b = interp * 1;//rand(int(++t), 1);
+	fragColor.a = interp;
+	if(fragColor.a < 0.1)
 		discard;
-	
 }

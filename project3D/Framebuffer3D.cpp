@@ -22,7 +22,7 @@ void Framebuffer3D::GenBuffer()
 	
 	glGenTextures(1, &m_tex);
 	glBindTexture(GL_TEXTURE_3D, m_tex);
-	glTexImage3D(GL_TEXTURE_3D, 0, GL_RGBA8, m_shape.x, m_shape.y, m_shape.z, 0, GL_RGBA, GL_FLOAT, 0);
+	glTexImage3D(GL_TEXTURE_3D, 0, GL_RGBA32F, m_shape.x, m_shape.y, m_shape.z, 0, GL_RGBA, GL_FLOAT, 0);
 	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_BORDER);
@@ -43,11 +43,6 @@ void Framebuffer3D::GenBuffer()
 
 void Framebuffer3D::draw(uint shader, uint buf, uint w, uint h, float time)
 {
-	glBindFramebuffer(GL_FRAMEBUFFER, m_buf);
-	glViewport(0, 0, m_shape.x, m_shape.y);
-	glClearColor(0, 0, 0, 0);
-	glClear(GL_COLOR_BUFFER_BIT);
-	glUseProgram(shader);
 	int loc = glGetUniformLocation(shader, "slices");
 	glUniform1i(loc, m_shape.z);
 	loc = glGetUniformLocation(shader, "time");
@@ -56,4 +51,13 @@ void Framebuffer3D::draw(uint shader, uint buf, uint w, uint h, float time)
 	m_model.drawInstancedGenericScreenQuad(m_shape.z);
 	glBindFramebuffer(GL_FRAMEBUFFER, buf);
 	glViewport(0, 0, w, h);
+}
+
+void Framebuffer3D::initDraw(uint shader)
+{
+	glBindFramebuffer(GL_FRAMEBUFFER, m_buf);
+	glViewport(0, 0, m_shape.x, m_shape.y);
+	glClearColor(0, 0, 0, 0);
+	glClear(GL_COLOR_BUFFER_BIT);
+	glUseProgram(shader);
 }

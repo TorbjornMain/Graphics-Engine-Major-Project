@@ -142,14 +142,10 @@ bool Application3D::startup() {
 	m_scene.GetParticleSystem("GreenerFlare").loadTexture("Textures/heart.png");
 	m_scene.GetParticleSystem("GreenerFlare").initializeUniforms();
 
-	m_fluidBuf = Framebuffer3D(glm::ivec3(100, 100, 100));
+	m_fluidBuf = Framebuffer3D(glm::ivec3(128, 128, 128));
 	m_fluidBuf.GenBuffer();
 
-	FluidSimulation fl = FluidSimulation();
-	fl.init(glm::ivec3(100, 100, 100));
-
-
-	m_scene.AddVisualiser("flowbot", glm::mat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 5, 0, 0, 1), m_fluidBuf.getTex(), m_fluidBuf.getShape());
+	m_scene.AddVisualiser("flowbot", glm::mat4(0, 15, 0, 0, 15, 0, 0, 0, 0, 0, -15, 0, 5, 0, 0, 1), m_fluidBuf.getTex(), m_fluidBuf.getShape());
 
 	return true;
 }
@@ -295,6 +291,7 @@ void Application3D::draw() {
 	c.transform = m_camTransform;
 	m_scene.setCamera(c);
 
+	m_fluidBuf.initDraw(m_fluidShader->GetID());
 	m_fluidBuf.draw(m_fluidShader->GetID(), 0, getWindowWidth(), getWindowHeight(), getTime());
 
 	if (m_postProcess)

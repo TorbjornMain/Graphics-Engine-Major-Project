@@ -1,0 +1,19 @@
+#version 450
+
+in vec2 uvs;
+in vec4 pos;
+flat in int slice;
+
+uniform int slices;
+uniform float time;
+uniform sampler3D tField;
+
+out vec4 fragColor;
+
+const vec3 gravity = vec3(0, -0.01, 0);
+
+
+void main()
+{
+	fragColor = gravity;
+}
